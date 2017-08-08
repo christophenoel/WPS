@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import net.opengis.ows.x11.RangeType;
-import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.ValueType;
 import net.opengis.wps.x100.CRSsType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -43,7 +42,6 @@ import net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData;
 import net.opengis.wps.x20.ComplexDataDocument;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataDescriptionType;
-import net.opengis.wps.x20.FormatDocument;
 import net.opengis.wps.x20.FormatDocument.Format;
 import net.opengis.wps.x20.LiteralDataDocument;
 import net.opengis.wps.x20.LiteralDataDomainType;
@@ -68,6 +66,7 @@ public class ProcessDescription {
 
     private Map<String, XmlObject> versionDescriptionTypeMap = new HashMap<String, XmlObject>();
 
+   
     public XmlObject getProcessDescriptionType(String version) {
 
         XmlObject result = versionDescriptionTypeMap.get(version);

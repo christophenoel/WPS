@@ -845,10 +845,27 @@ INSERT INTO FORMATENTRY VALUES('application/vnd.google-earth.kml+xml', 'http://s
 DELETE FROM CONFIGURATIONMODULE WHERE MODULE_CLASS_NAME='org.n52.wps.server.database.PostgresDatabaseConfigurationModule';
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.database.PostgresDatabaseConfigurationModule',FALSE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.Server',TRUE);
-INSERT INTO CONFIGURATIONENTRY VALUES('hostport','org.n52.wps.webapp.entities.Server','8080');
+
+
 
 --
 -- O&M Parser/Generator Configuration
 --
 INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.generator.OMGeneratorCM', TRUE);
+
+--
+-- Insert value for sample transactional
+--
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.Backend',TRUE);
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM',TRUE);
+INSERT INTO CONFIGURATIONENTRY VALUES('schema','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','http://spacebel.be/profile/docker.xsd');
+INSERT INTO CONFIGURATIONENTRY VALUES('profile','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','org.n52.wps.server.transactional.profiles.docker.DockerDeploymentProfile');
+INSERT INTO CONFIGURATIONENTRY VALUES('manager','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','be.spacebel.DockerManager');
+
+
+--
+-- Insert values for configuration
+--
+INSERT INTO CONFIGURATIONENTRY VALUES('docker_host','org.n52.wps.webapp.entities.Backend','docker.spacebel.be');
+

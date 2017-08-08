@@ -219,7 +219,7 @@ public class WPSConfig implements Serializable {
         return null;
     }
 
-    private Map<String, ConfigurationModule> getActiveConfigurationModules(ConfigurationCategory moduleCategorie){
+    public Map<String, ConfigurationModule> getActiveConfigurationModules(ConfigurationCategory moduleCategorie){
         return configurationManager.getConfigurationServices().getActiveConfigurationModulesByCategory(moduleCategorie);
     }
 

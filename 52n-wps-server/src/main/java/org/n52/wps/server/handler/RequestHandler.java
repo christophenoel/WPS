@@ -55,6 +55,8 @@ import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
+import org.n52.wps.server.transactional.request.DeployProcessRequest;
+import org.n52.wps.server.transactional.request.UndeployProcessRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -326,6 +328,12 @@ public class RequestHandler {
                         req = new GetStatusRequestV200(doc);
                     } else if (localName.equals("GetResult")) {
                         req = new GetResultRequestV200(doc);
+                    } else if (localName.equals("DeployProcess")) {
+                    req = new DeployProcessRequest(doc);
+                    this.responseMimeType = "text/xml";
+                     } else if (localName.equals("UndeployProcess")) {
+                    req = new UndeployProcessRequest(doc);
+                    this.responseMimeType = "text/xml";
                     } else if (!localName.equals("Execute")) {
                         throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: " + nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
                     } else {

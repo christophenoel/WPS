@@ -31,11 +31,8 @@ package org.n52.wps.server.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
@@ -49,6 +46,7 @@ import org.w3c.dom.NodeList;
 
 import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x20.ProcessOfferingsDocument;
+import org.n52.wps.server.ProcessDescription;
 
 /**
  * Handles a DescribeProcessRequest
@@ -165,7 +163,9 @@ public class DescribeProcessRequestV200 extends Request {
                                             ExceptionReport.INVALID_PARAMETER_VALUE,
                                             "identifier");
             }
-            ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_200);
+            LOGGER.debug("Getting process description for "+algorithmName);
+            ProcessDescription pdesc = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmName);
+            ProcessOffering offering  = (ProcessOffering) pdesc.getProcessDescriptionType(WPSConfig.VERSION_200);
             processOfferings.add(offering);
         }
         document.getProcessOfferings().setProcessOfferingArray(processOfferings.toArray(new ProcessOffering[identifiers.length]));

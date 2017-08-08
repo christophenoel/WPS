@@ -327,10 +327,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         }
         for (AlgorithmEntry entry : configurationDAO.getAlgorithmEntries(module.getClass().getName())) {
-
+            LOGGER.debug("Sync DB: adding algorithms for module : "+ module.getClass().getName() );
             if(!moduleAlgorithmNames.contains(entry.getAlgorithm())){
                 try {
                     module.getAlgorithmEntries().add(entry);
+                    LOGGER.debug("Sync DB: adding algorithms for module : "+ module.getClass().getName() + " - added "+entry);
                 } catch (Exception e) {
                     LOGGER.info("Could not add algorithm " + entry.getAlgorithm() + " to repository " + module.getClass().getName(), e.getClass());
                 }

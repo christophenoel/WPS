@@ -53,6 +53,14 @@
 		<put-attribute name="description" value="Configure database properties" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/databases.jsp"></put-attribute>
 	</definition>
+        
+        <definition name="backend" extends="base">
+		<put-attribute name="title" value="Platform Backend Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Backend Docker and Cloud Configurations" type="string" />
+		<put-attribute name="description" value="Configure docker and cloud properties" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/backend.jsp"></put-attribute>
+	</definition>
+        
 
 	<definition name="users" extends="base">
 		<put-attribute name="title" value="Users Configurations - 52° North WPS" />

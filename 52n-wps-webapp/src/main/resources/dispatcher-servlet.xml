@@ -18,6 +18,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <bean id="springIntegrationHelper" class="org.n52.wps.commons.SpringIntegrationHelper" init-method="init" />
 
     <bean id="repositoryManager" class="org.n52.wps.server.RepositoryManager" depends-on="springIntegrationHelper" />
+     <bean id="trepositoryManager" class="org.n52.wps.server.transactional.repository.TransactionalRepositoryManager" depends-on="springIntegrationHelper" />
 
 	<!-- landing page and admin web application -->
 <!-- 	<bean id="viewResolver" -->
