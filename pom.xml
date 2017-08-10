@@ -166,11 +166,11 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <header>misc/licenses/license_header.txt</header>
-                 
+                 <!--
                     <headerDefinitions>
                         <headerDefinition>misc/licenses/javadoc-def.xml</headerDefinition>
                     </headerDefinitions>
-                 
+                 -->
                     <aggregate>true</aggregate>
                     <properties>
                         <inceptionYear>${project.inceptionYear}</inceptionYear>
