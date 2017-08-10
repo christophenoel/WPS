@@ -42,14 +42,28 @@ This project includes:
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Web Application under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  a connector factory under Revised BSD
+  a connector for Pageant using JNA under Revised BSD
+  a connector for ssh-agent under Revised BSD
+  a library to use jsch-agent-proxy with sshj under Revised BSD
+  all under The Apache Software License, Version 2.0
+  allblobstore under The Apache Software License, Version 2.0
+  allcompute under The Apache Software License, Version 2.0
+  allloadbalancer under The Apache Software License, Version 2.0
+  an implementation of USocketFactory using JNA under Revised BSD
+  an implementation of USocketFactory using netcat under Revised BSD
   AOP alliance under Public Domain
   Apache Commons Net under Apache License, Version 2.0
+  Apache jclouds :: OpenStack :: Nova API under The Apache Software License, Version 2.0
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   Autotag - Core runtime under The Apache Software License, Version 2.0
+  base64 under Public domain
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
+  Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs under Bouncy Castle Licence
+  Bouncy Castle Provider under Bouncy Castle Licence
   builder under Apache License 2.0
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
@@ -83,7 +97,11 @@ This project includes:
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
   GML2 XML Support under Lesser General Public License (LGPL)
   GML3 XML Support under Lesser General Public License (LGPL)
+  Google Guice - Core Library under The Apache Software License, Version 2.0
+  Google Guice - Extensions - AssistedInject under The Apache Software License, Version 2.0
+  Google Guice - Extensions - MultiBindings under The Apache Software License, Version 2.0
   Grid Coverage module under Lesser General Public License (LGPL)
+  Gson under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
@@ -102,11 +120,81 @@ This project includes:
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java Native Access under LGPL, version 2.1 or ASL, version 2
+  Java Native Access Platform under LGPL, version 2.1 or ASL, version 2
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
+  java-xmlbuilder under Apache License, Version 2.0
   Javassist under MPL 1.1
+  javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
+  jclouds Amazon EC2 provider under The Apache Software License, Version 2.0
+  jclouds Amazon Elastic Load Balancer provider under The Apache Software License, Version 2.0
+  jclouds Amazon Identity and Access Management (STS) provider under The Apache Software License, Version 2.0
+  jclouds Amazon Route 53 provider under The Apache Software License, Version 2.0
+  jclouds Amazon Simple Queue Service provider under The Apache Software License, Version 2.0
+  jclouds Amazon Simple Storage Service (S3) provider under The Apache Software License, Version 2.0
+  jclouds atmos components under The Apache Software License, Version 2.0
+  jclouds Azure Storage provider under The Apache Software License, Version 2.0
+  jclouds blobstore core under The Apache Software License, Version 2.0
+  jclouds bouncycastle EncryptionService Module under The Apache Software License, Version 2.0
+  jclouds bring your own node provider under The Apache Software License, Version 2.0
+  jclouds Chef api under The Apache Software License, Version 2.0
+  jclouds cloudstack core under The Apache Software License, Version 2.0
+  jclouds cloudwatch api under The Apache Software License, Version 2.0
+  jclouds Components Core under The Apache Software License, Version 2.0
+  jclouds compute core under The Apache Software License, Version 2.0
+  jclouds DigitalOcean v2 API Provider under The Apache Software License, Version 2.0
+  jclouds docker API under The Apache Software License, Version 2.0
+  jclouds dynect api under The Apache Software License, Version 2.0
+  jclouds ec2 api under The Apache Software License, Version 2.0
+  jclouds ElasticHosts BlueSquare London provider under The Apache Software License, Version 2.0
+  jclouds ElasticHosts Peer1 London provider under The Apache Software License, Version 2.0
+  jclouds ElasticHosts Peer1 San Antonio provider under The Apache Software License, Version 2.0
+  jclouds elasticstack core under The Apache Software License, Version 2.0
+  jclouds filesystem core under The Apache Software License, Version 2.0
+  jclouds Go2Cloud Johannesburg1 provider under The Apache Software License, Version 2.0
+  jclouds GoGrid provider under The Apache Software License, Version 2.0
+  jclouds Google Cloud Core under The Apache Software License, Version 2.0
+  jclouds Google Compute Engine provider under The Apache Software License, Version 2.0
+  jclouds loadbalancer core under The Apache Software License, Version 2.0
+  jclouds OAuth core under The Apache Software License, Version 2.0
+  jclouds OkHttp Driver under The Apache Software License, Version 2.0
+  jclouds Open Hosting East1 provider under The Apache Software License, Version 2.0
+  jclouds openstack-cinder api under The Apache Software License, Version 2.0
+  jclouds openstack-keystone api under The Apache Software License, Version 2.0
+  jclouds openstack-nova-ec2 api under The Apache Software License, Version 2.0
+  jclouds openstack-swift api under The Apache Software License, Version 2.0
+  jclouds openstack-trove api under The Apache Software License, Version 2.0
+  jclouds ProfitBricks api under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Databases UK provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Databases US provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Files UK provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Files US provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Load Balancers API under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Load Balancers UK provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Cloud Load Balancers US provider under The Apache Software License, Version 2.0
+  jclouds rackspace clouddns api under The Apache Software License, Version 2.0
+  jclouds rackspace cloudidentity api under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud Block Storage UK provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud Block Storage US provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud DNS UK provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud DNS US provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud Servers provider under The Apache Software License, Version 2.0
+  jclouds Rackspace Next Generation Cloud Servers US provider under The Apache Software License, Version 2.0
+  jclouds rackspace-cloudfiles api under The Apache Software License, Version 2.0
+  jclouds route53 api under The Apache Software License, Version 2.0
+  jclouds s3 api under The Apache Software License, Version 2.0
+  jclouds script builder under The Apache Software License, Version 2.0
+  jclouds Serverlove Manchester provider under The Apache Software License, Version 2.0
+  jclouds SkaliCloud Malaysia provider under The Apache Software License, Version 2.0
+  jclouds SLF4J Logging Module under The Apache Software License, Version 2.0
+  jclouds SoftLayer core under The Apache Software License, Version 2.0
+  jclouds sqs api under The Apache Software License, Version 2.0
+  jclouds sshj ssh client under The Apache Software License, Version 2.0
+  jclouds sts api under The Apache Software License, Version 2.0
+  jclouds ultradns-ws provider under The Apache Software License, Version 2.0
   jcommon under GNU Lesser General Public Licence
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   jep under GNU General Public License, version 2
@@ -115,13 +203,17 @@ This project includes:
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
+  jsch-agent-proxy core library under Revised BSD
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
+  JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   jsr-275 under BSD License
+  jsr311-api under CDDL License
   jstl under GNU General Public License (GPL), version 2, with the CLASSPATH exception
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
+  JZlib under BSD
   KML XML Support under Lesser General Public License (LGPL)
   kXML 2 under The BSD License
   Log4j Implemented Over SLF4J under Apache Software Licenses
@@ -138,6 +230,8 @@ This project includes:
   OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
+  OkHttp under Apache 2.0
+  Okio under Apache 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.n52.wps:gmlpacket-2.0 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   oro under The Apache Software License, Version 1.1
@@ -150,6 +244,7 @@ This project includes:
   Shapefile module under Lesser General Public License (LGPL)
   SLF4J API Module under MIT License
   SLF4J Simple Binding under MIT License
+  SnakeYAML under Apache License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
   Spring Context under The Apache Software License, Version 2.0
@@ -168,6 +263,7 @@ This project includes:
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
+  sshj under Apache 2
   standard under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License

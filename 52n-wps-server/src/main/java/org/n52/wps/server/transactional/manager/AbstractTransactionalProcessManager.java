@@ -58,7 +58,7 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
 
     
     @Override
-    public abstract  boolean unDeployProcess(UndeployProcessRequest request) throws Exception;
+    public abstract  boolean unDeployProcess(String processID) throws Exception;
     @Override
         public abstract boolean containsProcess(String processID) throws Exception;
     @Override
@@ -68,7 +68,7 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
     @Override
 	public abstract Document invoke(ExecuteRequest request, String algorithmID) throws Exception;
     @Override
-	public abstract boolean deployProcess(DeploymentProfileOrice request) throws Exception;
+	public abstract boolean deployProcess(DeploymentProfile request) throws Exception;
 	
 
     /**
