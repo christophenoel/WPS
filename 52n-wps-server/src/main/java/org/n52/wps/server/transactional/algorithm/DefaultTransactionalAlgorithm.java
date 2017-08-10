@@ -26,24 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package org.n52.wps.server.transactional.algorithm;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x20.DeployProcessDocument;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
+import org.n52.wps.server.transactional.manager.IProcessManager;
 import org.n52.wps.server.transactional.repository.TransactionalAlgorithmRepository;
-import org.n52.wps.server.transactional.repository.TransactionalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,20 +55,40 @@ import org.slf4j.LoggerFactory;
  *
  * @author cnl
  */
-public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
+public class DefaultTransactionalAlgorithm implements IAlgorithm {
 
-      private static Logger LOGGER = LoggerFactory
+    private static Logger LOGGER = LoggerFactory
             .getLogger(DefaultTransactionalAlgorithm.class);
     private ProcessDescription description;
+    protected String algorithmID;
+    private IProcessManager manager;
 
-    public DefaultTransactionalAlgorithm(String algorithmClassName) {
-         super(algorithmClassName);
-         this.description = initializeDescription();
+    public IProcessManager getManager() {
+        return manager;
+    }
+
+    public void setManager(IProcessManager manager) {
+        this.manager = manager;
+    }
+
+
+    public DefaultTransactionalAlgorithm(String algorithmID, String  managerClass) throws Exception{
+        this.algorithmID = algorithmID;
+         Constructor<?> constructor;
+            constructor = Class.forName(managerClass).getConstructor(
+                   String.class);
+            // Instantiate the deployment profile (constructor is called with deploy request and process id)
+            this.manager = (IProcessManager) constructor.newInstance(algorithmID);
+
+    }
+
+    public String getAlgorithmID() {
+        return algorithmID;
     }
 
    
 
-    @Override
+    
     public Map<String, IData> run(ExecuteDocument document) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -78,8 +102,6 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
     public List<String> getErrors() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-
 
     @Override
     public String getWellKnownName() {
@@ -101,21 +123,35 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
     public ProcessOfferingDocument.ProcessOffering getProcessOffering() {
-        LOGGER.debug("getProcessOffering called for transactional process:"+algorithmID);
-        return TransactionalRepositoryManager.getDescription(algorithmID).getProcessOffering();
+        LOGGER.debug(
+                "getProcessOffering called for transactional process:" + algorithmID);
+        TransactionalAlgorithmRepository repository = (TransactionalAlgorithmRepository) RepositoryManagerSingletonWrapper.getInstance().getRepositoryForAlgorithm(
+                algorithmID);
+        //return TransactionalRepositoryManager.getDescription(algorithmID).getProcessOffering();
+        return repository.getDescription(algorithmID).getProcessOffering();
+
     }
-    
+
     private ProcessDescription initializeDescription() {
         LOGGER.debug("initializing description");
-          ProcessDescription processDescription = new ProcessDescription();
-            processDescription.addProcessDescriptionForVersion(TransactionalRepositoryManager.getDescription(algorithmID).getProcessOffering(), WPSConfig.VERSION_200);
-            return processDescription;
+        ProcessDescription processDescription = new ProcessDescription();
+        TransactionalAlgorithmRepository repository = (TransactionalAlgorithmRepository) RepositoryManagerSingletonWrapper.getInstance().getRepositoryForAlgorithm(
+                algorithmID);
+        processDescription.addProcessDescriptionForVersion(
+                repository.getDescription(algorithmID).getProcessOffering(),
+                WPSConfig.VERSION_200);
+        return processDescription;
     }
-    
+
     public ProcessDescription getDescription() {
-         return description;
-    
+        return description;
+
     }
 }
+
+
+
+
+
+

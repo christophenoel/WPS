@@ -33,11 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.n52.wps.server.transactional.module.TransactionalAlgorithmRepositoryCMBase;
 import org.n52.wps.server.transactional.profiles.docker.repository.DockerTransactionalAlgorithmRepository;
-import org.n52.wps.webapp.api.AlgorithmEntry;
 
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationKey;
-import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
@@ -46,78 +44,13 @@ import org.slf4j.LoggerFactory;
 public class DockerTransactionalAlgorithmRepositoryCM extends TransactionalAlgorithmRepositoryCMBase {
 
     public DockerTransactionalAlgorithmRepositoryCM() {
-        
-        algorithmEntries = new ArrayList<>();
+
+        super();
     }
 
     protected static Logger LOGGER = LoggerFactory.getLogger(
             DockerTransactionalAlgorithmRepositoryCM.class);
 
-    
-      public final String KEY_PROFILE = "profile";
-    public final String KEY_SCHEMA = "schema";
-    public final String KEY_MANAGER = "manager";
-    private boolean isActive = true;
-
-    protected List<AlgorithmEntry> algorithmEntries;
-
-    private String profile;
-
-    public String getProfile() {
-        return profile;
-    }
-
-    @ConfigurationKey(key = "profile")
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
-    private String schema;
-
-    public String getSchema() {
-        return schema;
-    }
-
-    @ConfigurationKey(key = "schema")
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-    private String manager;
-
-    public String getManager() {
-        return manager;
-    }
-
-    @ConfigurationKey(key = "manager")
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        this.isActive = active;
-    }
-
-    @Override
-    public List<AlgorithmEntry> getAlgorithmEntries() {
-        LOGGER.debug("Getting algorithm entries");
-        return algorithmEntries;
-    }
-
-    @Override
-    public List<FormatEntry> getFormatEntries() {
-        return null;
-    }
-
-    @Override
-    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-        return configurationEntries;
-    }
-    
     @Override
     public String getClassName() {
         return DockerTransactionalAlgorithmRepository.class.getName();
@@ -148,6 +81,8 @@ public class DockerTransactionalAlgorithmRepositoryCM extends TransactionalAlgor
     protected List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(
             schemaEntry, profileEntry, managerEntry);
 
-
-
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 }

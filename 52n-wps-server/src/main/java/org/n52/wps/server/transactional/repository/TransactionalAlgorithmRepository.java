@@ -28,14 +28,22 @@
  */
 package org.n52.wps.server.transactional.repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import net.opengis.wps.x20.ProcessOfferingDocument;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
@@ -43,7 +51,7 @@ import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.transactional.algorithm.DefaultTransactionalAlgorithm;
 import org.n52.wps.server.transactional.module.TransactionalAlgorithmRepositoryCMBase;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
-import org.n52.wps.server.transactional.util.TransactionalRepositoryManagerSingletonWrapper;
+import org.n52.wps.server.transactional.request.DeployProcessRequest;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.slf4j.Logger;
@@ -150,6 +158,7 @@ public abstract class TransactionalAlgorithmRepository implements
      * @return
      */
     public boolean containsAlgorithm(String className) {
+         DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm)getAlgorithm(className);
         return getAlgorithmNames().contains(className);
     }
 
@@ -167,7 +176,8 @@ public abstract class TransactionalAlgorithmRepository implements
         IAlgorithm algorithm = null;
         LOGGER.debug(
                 "loading default transactional algorithm for transactional process:" + processId);
-        algorithm = new DefaultTransactionalAlgorithm(processId);
+        String manager = transactionalAlgorithmRepoConfigModule.getManager();
+        algorithm = new DefaultTransactionalAlgorithm(processId, manager);
 
         boolean isNoProcessDescriptionValid = false;
 
@@ -190,10 +200,49 @@ public abstract class TransactionalAlgorithmRepository implements
 
         String processID = deployProfile.getProcessID();
         LOGGER.debug("deploy algorithm " + processID);
-        TransactionalRepositoryManagerSingletonWrapper.getInstance().deployProcess(deployProfile);
+        //TransactionalRepositoryManagerSingletonWrapper.getInstance().deployProcess(deployProfile);
+        LOGGER.debug("deploying process...");
+        // Get the ConfigurationModule
+
+        try {
+            LOGGER.debug("adding algorithm entry process...");
+            WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().addAlgorithmEntry(
+                    transactionalAlgorithmRepoConfigModule.getClass().getName(),
+                    deployProfile.getProcessID());
+        } catch (Exception e) {
+            throw new ExceptionReport("Error: Process already exists",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, e);
+        }
+        /**
+         * Save process description. Note that the Process Description is put in
+         * an location agnostic of the repository profile. Therefore this is
+         * handled by the TransactionalRepositoryManager.
+         *
+         */
+        try {
+            LOGGER.debug("writing process description file...");
+            ProcessOfferingDocument po = ProcessOfferingDocument.Factory.newInstance();
+            po.setProcessOffering(
+                    deployProfile.getProcessOffering());
+            // Call the transactional repository manager to write process description
+            setDescription(deployProfile.getProcessID(), po);
+            // Call backend manager to deploy
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(
+                    DeployProcessRequest.class.getName()).log(
+                    Level.SEVERE,
+                    null, ex);
+        }
         LOGGER.debug("adding algorithm entry in repository");
         // Add algorithm entry in repository
         addAlgorithm(deployProfile.getProcessID());
+        DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm)getAlgorithm(deployProfile.getProcessID());
+        try {
+            algo.getManager().deployProcess(deployProfile);
+        } catch (Exception ex) {
+           throw new ExceptionReport("Error: Process cannot be deployed on the backend",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, ex);
+        }
         return true;
     }
 
@@ -205,6 +254,7 @@ public abstract class TransactionalAlgorithmRepository implements
      * @return
      */
     public boolean addAlgorithm(Object processIDObject) {
+        // TODO check if contains
         LOGGER.debug("adding algorithm :" + processIDObject);
         if (!(processIDObject instanceof String)) {
             LOGGER.warn("processId not a String");
@@ -251,7 +301,7 @@ public abstract class TransactionalAlgorithmRepository implements
                 for (IAlgorithm algo : algorithmMap.values()) {
                     LOGGER.debug("found:" + algo.getWellKnownName());
                 }
-               return null;
+                return null;
 
             }
             return desc;
@@ -274,4 +324,100 @@ public abstract class TransactionalAlgorithmRepository implements
     public void setSchema(String schema) {
         this.schema = schema;
     }
+
+    /**
+     * Writes the ProcessDescription in the appropriate directory. Additional
+     * Note the directory (location) is agnostic of the repository / config
+     * module.
+     *
+     * @param processId
+     * @param processDescription
+     */
+    public static void setDescription(String processId,
+            ProcessOfferingDocument processDescription) {
+        String fullPath = AbstractTransactionalAlgorithm.class
+                .getProtectionDomain().getCodeSource().getLocation().toString();
+        int searchIndex = fullPath.indexOf("WEB-INF");
+        String subPath = fullPath.substring(0, searchIndex);
+        subPath = subPath.replaceFirst("file:", "");
+        /**
+         * if (subPath.startsWith("/")) { subPath = subPath.substring(1); }
+         */
+        File directory = new File(subPath + "WEB-INF/ProcessDescriptions/");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
+                + ".xml";
+        try {
+            // TODO handling when exception occurs ...
+            LOGGER.info("*************************=========. write " + path);
+            processDescription.save(new File(path));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Read the Process Description for the given Process Id in the location
+     * note the location is agnostic of the repository and config module.
+     */
+    public static ProcessOfferingDocument getDescription(String processId) {
+        String fullPath = AbstractTransactionalAlgorithm.class
+                .getProtectionDomain().getCodeSource().getLocation().toString();
+        int searchIndex = fullPath.indexOf("WEB-INF");
+        String subPath = fullPath.substring(0, searchIndex);
+        subPath = subPath.replaceFirst("file:", "");
+        /**
+         * Cause problem ! if (subPath.startsWith("/")) { subPath =
+         * subPath.substring(1); }
+         */
+        String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
+                + ".xml";
+        LOGGER.info(path);
+        try {
+            XmlOptions option = new XmlOptions();
+            option.setLoadTrimTextBuffer();
+            File descFile = new File(path);
+            ProcessOfferingDocument descDom = ProcessOfferingDocument.Factory
+                    .parse(descFile, option);
+            return descDom;
+        } catch (TransformerFactoryConfigurationError e) {
+            e.printStackTrace();
+
+        } catch (XmlException ex) {
+            java.util.logging.Logger.getLogger(
+                    TransactionalRepositoryManager.class.getName()).log(
+                    Level.SEVERE,
+                    null, ex);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(
+                    TransactionalRepositoryManager.class.getName()).log(
+                    Level.SEVERE,
+                    null, ex);
+        }
+        return null;
+    }
+    /**
+     * Remove description from the transactional repository descriptions
+     * location the location is agnostic of the repository / module.
+     *
+     * @param processId
+     */
+    public static void removeDescription(String processId) {
+        String fullPath = AbstractTransactionalAlgorithm.class
+                .getProtectionDomain().getCodeSource().getLocation().toString();
+        int searchIndex = fullPath.indexOf("WEB-INF");
+        String subPath = fullPath.substring(0, searchIndex);
+        subPath = subPath.replaceFirst("file:", "");
+        String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
+                + ".xml";
+        File descFile = new File(path);
+        descFile.delete();
+    }
+
+    
+    
 }

@@ -61,21 +61,11 @@ public abstract class TransactionalAlgorithmRepositoryCMBase extends ClassKnowin
     public final String KEY_PROFILE = "profile";
     public final String KEY_SCHEMA = "schema";
     public final String KEY_MANAGER = "manager";
-    private boolean isActive = true;
-
+    protected boolean isActive = true;
     private List<AlgorithmEntry> algorithmEntries;
-
-    private String profile;
-
-    public String getProfile() {
-        return profile;
-    }
-
-    @ConfigurationKey(key = "profile")
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
-    private String schema;
+    protected String profile;
+    protected String schema;
+    protected String manager;
 
     public String getSchema() {
         return schema;
@@ -85,7 +75,6 @@ public abstract class TransactionalAlgorithmRepositoryCMBase extends ClassKnowin
     public void setSchema(String schema) {
         this.schema = schema;
     }
-    private String manager;
 
     public String getManager() {
         return manager;
@@ -94,6 +83,15 @@ public abstract class TransactionalAlgorithmRepositoryCMBase extends ClassKnowin
     @ConfigurationKey(key = "manager")
     public void setManager(String manager) {
         this.manager = manager;
+    }
+
+    @ConfigurationKey(key = "profile")
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getProfile() {
+        return profile;
     }
 
     @Override
