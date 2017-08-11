@@ -50,50 +50,55 @@ import org.n52.wps.webapp.service.CapabilitiesService;
 public class Backend implements ConfigurationModule {
 
     private static final String blankErrorMessage = "Field cannot be blank.";
-private ConfigurationEntry<String> dockerHostnameEntry = new StringConfigurationEntry("dockerhost", "Docker Server Host Name", "",
+    private ConfigurationEntry<String> dockerHostnameEntry = new StringConfigurationEntry(
+            "dockerhost", "Docker Server Host Name", "",
             true, "localhost");
- 
-    
-    
+
     private String dockerHost;
+    private String user;
+
+    private String password;
+
     public String getDockerHost() {
         return dockerHost;
     }
- @ConfigurationKey(key = "docker_host")
+
+    @ConfigurationKey(key = "docker_host")
     public void setDockerHost(String dockerHost) {
         this.dockerHost = dockerHost;
     }
-   
-   private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(dockerHostnameEntry);
 
-     @Override
+    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(
+            dockerHostnameEntry);
+
+    @Override
     public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
         return configurationEntries;
     }
 
     @Override
     public String getModuleName() {
-         return "Backend Platform Configuration (cloud and docker)";
+        return "Backend Platform Configuration (cloud and docker)";
     }
 
     @Override
     public boolean isActive() {
-     return true;
+        return true;
     }
 
     @Override
     public void setActive(boolean active) {
-        
+
     }
 
     @Override
     public ConfigurationCategory getCategory() {
-         return ConfigurationCategory.GENERAL;
+        return ConfigurationCategory.GENERAL;
     }
 
     @Override
     public List<AlgorithmEntry> getAlgorithmEntries() {
-       return null;
+        return null;
     }
 
     @Override
@@ -101,9 +106,19 @@ private ConfigurationEntry<String> dockerHostnameEntry = new StringConfiguration
         return null;
     }
 
- 
-  
+    public String getUser() {
+        return user;
+    }
+@ConfigurationKey(key = "ssh_user")
+    public void setUser(String user) {
+        this.user = user;
+    }
 
- 
-
+    public String getPassword() {
+        return password;
+    }
+@ConfigurationKey(key = "ssh_password")
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

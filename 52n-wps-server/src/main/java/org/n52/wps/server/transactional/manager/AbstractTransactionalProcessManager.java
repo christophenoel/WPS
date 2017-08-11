@@ -37,7 +37,7 @@ import java.util.Collection;
 import net.opengis.wps.x20.ExecuteDocument;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
-import org.n52.wps.server.transactional.request.UndeployProcessRequest;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.w3c.dom.Document;
 
 /**
@@ -46,12 +46,15 @@ import org.w3c.dom.Document;
  */
 public abstract class AbstractTransactionalProcessManager implements IProcessManager{
 
-    private  DeploymentProfile profile;
-    private  String processID;
+    protected  DeploymentProfile profile;
+    protected  String processID;
+   protected  ConfigurationModule backendConfig;
+    
 
     public AbstractTransactionalProcessManager(DeploymentProfile profile) {
         this.profile=profile;
         this.processID=profile.getProcessID();
+        
     }
 
    
@@ -69,7 +72,8 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
 	public abstract Document invoke(ExecuteRequest request, String algorithmID) throws Exception;
     @Override
 	public abstract boolean deployProcess(DeploymentProfile request) throws Exception;
-	
+
+        public abstract ConfigurationModule getBackendConfig() throws Exception;
 
     /**
      * @return the profile
