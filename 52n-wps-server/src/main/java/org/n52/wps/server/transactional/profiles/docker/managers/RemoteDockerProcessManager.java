@@ -33,25 +33,43 @@
  */
 package org.n52.wps.server.transactional.profiles.docker.managers;
 
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.DockerClientConfig;
 import java.util.Collection;
 import net.opengis.wps.x20.ExecuteDocument;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.transactional.manager.AbstractTransactionalProcessManager;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
-import org.n52.wps.webapp.entities.Backend;
+import org.n52.wps.webapp.entities.RemoteDockerHostBackend;
 import org.w3c.dom.Document;
 
 /**
  *
  * @author cnl
  */
-public class LocalDockerProcessManager extends AbstractTransactionalProcessManager {
+public class RemoteDockerProcessManager extends AbstractTransactionalProcessManager {
 
-    public LocalDockerProcessManager(DeploymentProfile profile) {
+    private DockerClient docker;
+
+    public RemoteDockerProcessManager(DeploymentProfile profile) throws Exception {
         super(profile);
-        this.backendConfig = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(
-                Backend.class.getName());
+        RemoteDockerHostBackend db = getBackendConfig();
+        DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost(db.getDockerHost())
+                .withDockerTlsVerify(true)
+                .withDockerCertPath(db.getDockerCertPath())
+                .withDockerConfig(db.getDockerConfig())
+                .withApiVersion(db.getApiVersion())
+                .withRegistryUrl("") /*TODO*/
+                .withRegistryUsername(db.getRegistryUserName())
+                .withRegistryPassword(db.getRegistryPassword())
+                .withRegistryEmail(db.getRegistryEmail())
+                .build();
+        this.docker = DockerClientBuilder.getInstance(config).build();
     }
 
     @Override
@@ -76,21 +94,35 @@ public class LocalDockerProcessManager extends AbstractTransactionalProcessManag
 
     @Override
     public Document invoke(ExecuteRequest request, String algorithmID) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        /** TODO parsing of inputs , mouting of volumes, collecting of results**/
+        
+        CreateContainerResponse container = docker.createContainerCmd("busybox")
+   .withCmd("touch", "/test").exec();
+        docker.startContainerCmd(container.getId()).exec();
+        return null;
+   
     }
 
     @Override
     public boolean deployProcess(DeploymentProfile request) throws Exception {
         // get a context with docker that offers the portable ComputeService api
 
-
 // release resources
-return true;
-      }
-
-    @Override
-    public Backend getBackendConfig() throws Exception {
-        return (Backend) this.backendConfig;
+        return true;
     }
 
+    @Override
+    public RemoteDockerHostBackend getBackendConfig() throws Exception {
+        return ((RemoteDockerHostBackend) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(
+                RemoteDockerHostBackend.class.getName()));
+
+    }
+
+    public DockerClient getDocker() {
+        return docker;
+    }
+
+    public void setDocker(DockerClient docker) {
+        this.docker = docker;
+    }
 }

@@ -29,8 +29,7 @@
 package org.n52.wps.webapp.web;
 
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.entities.Backend;
-import org.n52.wps.webapp.entities.Server;
+import org.n52.wps.webapp.entities.RemoteDockerHostBackend;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,9 +51,9 @@ public class BackendController extends BaseConfigurationsController {
     @RequestMapping(method = RequestMethod.GET)
     public String display(Model model) {
         ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-                Backend.class.getName());
+                RemoteDockerHostBackend.class.getName());
         model.addAttribute("configurationModule", module);
         LOGGER.info("Reterived '{}' configuration module.", module.getClass().getName());
-        return "backend";
+        return "remotedockerhostbackend";
     }
 }

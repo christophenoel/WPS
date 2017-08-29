@@ -857,7 +857,7 @@ INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schema
 --
 -- Insert value for sample transactional
 --
-INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.Backend',TRUE);
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.RemoteDockerHostBackend',TRUE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM',TRUE);
 INSERT INTO CONFIGURATIONENTRY VALUES('schema','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','http://spacebel.be/profile/docker.xsd');
 INSERT INTO CONFIGURATIONENTRY VALUES('profile','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','org.n52.wps.server.transactional.profiles.docker.DockerDeploymentProfile');
@@ -867,5 +867,5 @@ INSERT INTO CONFIGURATIONENTRY VALUES('manager','org.n52.wps.server.transactiona
 --
 -- Insert values for configuration
 --
-INSERT INTO CONFIGURATIONENTRY VALUES('docker_host','org.n52.wps.webapp.entities.Backend','docker.spacebel.be');
+INSERT INTO CONFIGURATIONENTRY VALUES('docker_host','org.n52.wps.webapp.entities.RemoteDockerHostBackend','docker.spacebel.be');
 

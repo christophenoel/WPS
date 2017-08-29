@@ -48,7 +48,7 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
 
     protected  DeploymentProfile profile;
     protected  String processID;
-   protected  ConfigurationModule backendConfig;
+   
     
 
     public AbstractTransactionalProcessManager(DeploymentProfile profile) {
