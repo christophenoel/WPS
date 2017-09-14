@@ -861,11 +861,21 @@ INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.RemoteDocker
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM',TRUE);
 INSERT INTO CONFIGURATIONENTRY VALUES('schema','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','http://spacebel.be/profile/docker.xsd');
 INSERT INTO CONFIGURATIONENTRY VALUES('profile','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','org.n52.wps.server.transactional.profiles.docker.DockerDeploymentProfile');
-INSERT INTO CONFIGURATIONENTRY VALUES('manager','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','be.spacebel.DockerManager');
+INSERT INTO CONFIGURATIONENTRY VALUES('manager','org.n52.wps.server.transactional.profiles.docker.DockerTransactionalAlgorithmRepositoryCM','org.n52.wps.server.transactional.profiles.docker.managers.RemoteDockerProcessManager');
 
 
 --
 -- Insert values for configuration
 --
-INSERT INTO CONFIGURATIONENTRY VALUES('docker_host','org.n52.wps.webapp.entities.RemoteDockerHostBackend','docker.spacebel.be');
+INSERT INTO CONFIGURATIONENTRY VALUES('dockerurl','org.n52.wps.webapp.entities.RemoteDockerHostBackend','https://172.17.2.165:2376/');
+INSERT INTO CONFIGURATIONENTRY VALUES('dockerCertPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','D:\\vm1');
+INSERT INTO CONFIGURATIONENTRY VALUES('sshhost','org.n52.wps.webapp.entities.RemoteDockerHostBackend','ld-ogc-tb13-vm1');
+INSERT INTO CONFIGURATIONENTRY VALUES('sshuser','org.n52.wps.webapp.entities.RemoteDockerHostBackend','root');
+INSERT INTO CONFIGURATIONENTRY VALUES('sshpassword','org.n52.wps.webapp.entities.RemoteDockerHostBackend','Startup1$');
+INSERT INTO CONFIGURATIONENTRY VALUES('nfsWPSPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','/nfs-wps');
+INSERT INTO CONFIGURATIONENTRY VALUES('nfsEODataPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','/nfs-eodata');
+INSERT INTO CONFIGURATIONENTRY VALUES('EODataConversionPrefix','org.n52.wps.webapp.entities.RemoteDockerHostBackend','file://eodata');
+INSERT INTO CONFIGURATIONENTRY VALUES('inputDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','inputDir');
+INSERT INTO CONFIGURATIONENTRY VALUES('outputDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','outputDir');
+INSERT INTO CONFIGURATIONENTRY VALUES('envDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','envDir');
 

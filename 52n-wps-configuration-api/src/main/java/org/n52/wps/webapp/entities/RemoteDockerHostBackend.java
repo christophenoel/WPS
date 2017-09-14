@@ -49,40 +49,62 @@ import org.n52.wps.webapp.service.CapabilitiesService;
 public class RemoteDockerHostBackend implements ConfigurationModule {
 
     private static final String blankErrorMessage = "Field cannot be blank.";
-    
-    
 
     private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(
-     new StringConfigurationEntry(
-            "dockerhost", "Docker Server Host Name", "",
-            true, "localhost"),
-             new StringConfigurationEntry(
-            "sshuser", "Docker SSH User ", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "sshpassword", "Docker SSH Password", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "dockerCertPath", "Docker Certificate Path", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "dockerConfig", "Docker Config File Path", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "apiVersion", "Docker API Version", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "registryUserName", "Docker Registry Username", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "registryPassword", "Docker Registry Password", "",
-            true, ""),
-             new StringConfigurationEntry(
-            "registryEmail", "Docker Registry Email", "",
-            true, "")
+            new StringConfigurationEntry(
+                    "dockerurl", "Docker Server URL", "",
+                    true, "localhost"),
+            new StringConfigurationEntry(
+                    "dockerCertPath", "Docker Certificate Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "dockerConfig", "Docker Config File Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "apiVersion", "Docker API Version", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "registryUserName", "Docker Registry Username", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "registryPassword", "Docker Registry Password", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "registryEmail", "Docker Registry Email", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "sshhost", "Host access by SSH with NFS mounted", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "sshuser", "SSH User ", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "sshpassword", "SSH Password", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "nfsWPSPath", "WPS NFS Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "nfsEODataPath", "EOData NFS Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "EODataConversionPrefix", "EOData Prefix for conversion to NFS path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "inputDir", "Inputs Directory Relative Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "outputDir", "Outputs Directory Relative Path", "",
+                    true, ""),
+            new StringConfigurationEntry(
+                    "envDir", "Environmnent Variables  file location", "",
+                    true, "")
     );
-    
-    private String dockerHost;
+
+    private String dockerURL;
+    private String sshhost;
+    private String nfsWPSPath;
+    private String nfsEODataPath;
     private String user;
     private String password;
     private String dockerCertPath;
@@ -91,17 +113,52 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     private String registryUserName;
     private String registryPassword;
     private String registryEmail;
+    private String EODataConversionPrefix;
 
-    public String getDockerHost() {
-        return dockerHost;
+    public String getEODataConversionPrefix() {
+        return EODataConversionPrefix;
     }
 
-    @ConfigurationKey(key = "docker_host")
-    public void setDockerHost(String dockerHost) {
-        this.dockerHost = dockerHost;
+    @ConfigurationKey(key = "EODataConversionPrefix")
+    public void setEODataConversionPrefix(String EODataConversionPrefix) {
+        this.EODataConversionPrefix = EODataConversionPrefix;
     }
 
-    
+    public String getInputDir() {
+        return inputDir;
+    }
+@ConfigurationKey(key = "inputDir")
+    public void setInputDir(String inputDir) {
+        this.inputDir = inputDir;
+    }
+
+    public String getOutputDir() {
+        return outputDir;
+    }
+@ConfigurationKey(key = "outputDir")
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    public String getEnvDir() {
+        return envDir;
+    }
+@ConfigurationKey(key = "envDir")
+    public void setEnvDir(String envDir) {
+        this.envDir = envDir;
+    }
+    private String inputDir;
+    private String outputDir;
+    private String envDir;
+
+    public String getDockerURL() {
+        return dockerURL;
+    }
+
+    @ConfigurationKey(key = "dockerurl")
+    public void setDockerURL(String dockerURL) {
+        this.dockerURL = dockerURL;
+    }
 
     @Override
     public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
@@ -141,7 +198,8 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     public String getUser() {
         return user;
     }
-@ConfigurationKey(key = "ssh_user")
+
+    @ConfigurationKey(key = "sshuser")
     public void setUser(String user) {
         this.user = user;
     }
@@ -149,12 +207,11 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     public String getPassword() {
         return password;
     }
-@ConfigurationKey(key = "ssh_password")
+
+    @ConfigurationKey(key = "sshpassword")
     public void setPassword(String password) {
         this.password = password;
     }
-
-
 
     /**
      * @return the dockerCertPath
@@ -245,5 +302,32 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     public void setRegistryEmail(String registryEmail) {
         this.registryEmail = registryEmail;
     }
-    
+
+    public String getSshhost() {
+        return sshhost;
+    }
+
+    @ConfigurationKey(key = "sshhost")
+    public void setSshhost(String sshhost) {
+        this.sshhost = sshhost;
+    }
+
+    public String getNfsWPSPath() {
+        return nfsWPSPath;
+    }
+
+    @ConfigurationKey(key = "nfsWPSPath")
+    public void setNfsWPSPath(String nfsWPSPath) {
+        this.nfsWPSPath = nfsWPSPath;
+    }
+
+    public String getNfsEODataPath() {
+        return nfsEODataPath;
+    }
+
+    @ConfigurationKey(key = "nfsEODataPath")
+    public void setNfsEODataPath(String nfsEODataPath) {
+        this.nfsEODataPath = nfsEODataPath;
+    }
+
 }

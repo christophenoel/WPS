@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import net.opengis.wps.x20.ProcessOfferingDocument;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -142,7 +141,8 @@ public abstract class TransactionalAlgorithmRepository implements
                 .getAlgorithmEntries();
 
         for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-            LOGGER.debug("Getting algorithm names found entry:" + algorithmEntry);
+            LOGGER.debug(
+                    "Getting algorithm names found entry:" + algorithmEntry.getAlgorithm());
             if (algorithmEntry.isActive()) {
                 algorithmNames.add(algorithmEntry.getAlgorithm());
             }
@@ -158,7 +158,8 @@ public abstract class TransactionalAlgorithmRepository implements
      * @return
      */
     public boolean containsAlgorithm(String className) {
-         DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm)getAlgorithm(className);
+        DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm) getAlgorithm(
+                className);
         return getAlgorithmNames().contains(className);
     }
 
@@ -177,6 +178,9 @@ public abstract class TransactionalAlgorithmRepository implements
         LOGGER.debug(
                 "loading default transactional algorithm for transactional process:" + processId);
         String manager = transactionalAlgorithmRepoConfigModule.getManager();
+        LOGGER.debug(
+                "manager loaded - attentio !!!!! loaded at startup !!! even when manager is modified");
+        LOGGER.debug("new default transactional algo");
         algorithm = new DefaultTransactionalAlgorithm(processId, manager);
 
         boolean isNoProcessDescriptionValid = false;
@@ -194,6 +198,16 @@ public abstract class TransactionalAlgorithmRepository implements
         }
 
         return algorithm;
+    }
+
+    public boolean undeployAlgorithm(String identifier) {
+        DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm) getAlgorithm(
+                identifier);
+        removeAlgorithm(identifier);
+        WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().deleteAlgorithmEntry(
+                transactionalAlgorithmRepoConfigModule.getClass().getName(),
+                identifier);
+        return true;
     }
 
     public boolean deployAlgorithm(DeploymentProfile deployProfile) throws ExceptionReport {
@@ -236,11 +250,13 @@ public abstract class TransactionalAlgorithmRepository implements
         LOGGER.debug("adding algorithm entry in repository");
         // Add algorithm entry in repository
         addAlgorithm(deployProfile.getProcessID());
-        DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm)getAlgorithm(deployProfile.getProcessID());
+        DefaultTransactionalAlgorithm algo = (DefaultTransactionalAlgorithm) getAlgorithm(
+                deployProfile.getProcessID());
         try {
             algo.getManager().deployProcess(deployProfile);
         } catch (Exception ex) {
-           throw new ExceptionReport("Error: Process cannot be deployed on the backend",
+            throw new ExceptionReport(
+                    "Error: Process cannot be deployed on the backend",
                     ExceptionReport.INVALID_PARAMETER_VALUE, ex);
         }
         return true;
@@ -268,7 +284,6 @@ public abstract class TransactionalAlgorithmRepository implements
             LOGGER.debug("putting algorithm to map:" + processID);
             processDescriptionMap.put(processID,
                     algorithm.getDescription());
-
             LOGGER.debug(
                     "Added description:" + algorithm.getDescription().toString());
             algorithmMap.put(processID, algorithm);
@@ -276,6 +291,7 @@ public abstract class TransactionalAlgorithmRepository implements
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error("Exception while trying to add algorithm {}",
                     processID);
             LOGGER.error(e.getMessage());
@@ -365,6 +381,7 @@ public abstract class TransactionalAlgorithmRepository implements
      * note the location is agnostic of the repository and config module.
      */
     public static ProcessOfferingDocument getDescription(String processId) {
+        LOGGER.debug("Get description file  of " + processId);
         String fullPath = AbstractTransactionalAlgorithm.class
                 .getProtectionDomain().getCodeSource().getLocation().toString();
         int searchIndex = fullPath.indexOf("WEB-INF");
@@ -376,7 +393,7 @@ public abstract class TransactionalAlgorithmRepository implements
          */
         String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
                 + ".xml";
-        LOGGER.info(path);
+        LOGGER.info("Path for description is " + path);
         try {
             XmlOptions option = new XmlOptions();
             option.setLoadTrimTextBuffer();
@@ -388,18 +405,23 @@ public abstract class TransactionalAlgorithmRepository implements
             e.printStackTrace();
 
         } catch (XmlException ex) {
+            ex.printStackTrace();
             java.util.logging.Logger.getLogger(
                     TransactionalRepositoryManager.class.getName()).log(
                     Level.SEVERE,
                     null, ex);
+
         } catch (IOException ex) {
+            ex.printStackTrace();
             java.util.logging.Logger.getLogger(
                     TransactionalRepositoryManager.class.getName()).log(
                     Level.SEVERE,
                     null, ex);
+
         }
         return null;
     }
+
     /**
      * Remove description from the transactional repository descriptions
      * location the location is agnostic of the repository / module.
@@ -418,6 +440,4 @@ public abstract class TransactionalAlgorithmRepository implements
         descFile.delete();
     }
 
-    
-    
 }

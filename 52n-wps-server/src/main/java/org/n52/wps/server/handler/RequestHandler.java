@@ -34,10 +34,8 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
@@ -379,6 +377,7 @@ public class RequestHandler {
                         resp = pool.submit(execReq).get();
                     }
                     catch (ExecutionException ee) {
+                        ee.printStackTrace();
                         LOGGER.warn("exception while handling ExecuteRequest.");
                         // the computation threw an error
                         // probably the client input is not valid

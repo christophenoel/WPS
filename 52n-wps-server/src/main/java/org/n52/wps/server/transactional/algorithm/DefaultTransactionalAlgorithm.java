@@ -36,16 +36,16 @@ package org.n52.wps.server.transactional.algorithm;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import net.opengis.wps.x100.ExecuteDocument;
-import net.opengis.wps.x20.DeployProcessDocument;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.AbstractTransactionalAlgorithm;
+import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
+import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.transactional.manager.IProcessManager;
 import org.n52.wps.server.transactional.repository.TransactionalAlgorithmRepository;
 import org.slf4j.Logger;
@@ -72,14 +72,22 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
     }
 
 
-    public DefaultTransactionalAlgorithm(String algorithmID, String  managerClass) throws Exception{
+    public DefaultTransactionalAlgorithm(String algorithmID, String  managerClass) throws Exception {
+        LOGGER.debug("loading default transactional algorith for "+algorithmID+ " with managerClass "+managerClass);
         this.algorithmID = algorithmID;
+        try {
          Constructor<?> constructor;
             constructor = Class.forName(managerClass).getConstructor(
                    String.class);
             // Instantiate the deployment profile (constructor is called with deploy request and process id)
             this.manager = (IProcessManager) constructor.newInstance(algorithmID);
-
+            
+        }
+        catch(Exception ex) {
+            LOGGER.warn("exception when trying to instantiate");
+            ex.printStackTrace();
+        }
+        
     }
 
     public String getAlgorithmID() {
@@ -89,23 +97,27 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
    
 
     
-    public Map<String, IData> run(ExecuteDocument document) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Map<String, IData> run(ExecuteRequest request) throws Exception {
+        ProcessDescription pdesc = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(((ExecuteRequestV200)request).getAlgorithmIdentifier());
+            ProcessOfferingDocument.ProcessOffering offering  = (ProcessOfferingDocument.ProcessOffering) pdesc.getProcessDescriptionType(WPSConfig.VERSION_200);
+        Map<String, IData> response = manager.invoke(((ExecuteRequestV200)request), algorithmID,offering);
+        return response;
     }
 
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Default Transactional Run with inputData is not supported"); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public List<String> getErrors() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOGGER.warn("getErrors returns null (implement if necesary)");
+        return null;
     }
 
     @Override
     public String getWellKnownName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.getAlgorithmID();
     }
 
     @Override
@@ -115,15 +127,15 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
 
     @Override
     public Class<?> getInputDataType(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Transactional getInputDataType not supported."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Class<?> getOutputDataType(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return GenericFileDataBinding.class;
     }
 
-    public ProcessOfferingDocument.ProcessOffering getProcessOffering() {
+    public ProcessOfferingDocument.ProcessOffering getProcessOffering() throws Exception {
         LOGGER.debug(
                 "getProcessOffering called for transactional process:" + algorithmID);
         TransactionalAlgorithmRepository repository = (TransactionalAlgorithmRepository) RepositoryManagerSingletonWrapper.getInstance().getRepositoryForAlgorithm(
@@ -133,18 +145,29 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
 
     }
 
-    private ProcessDescription initializeDescription() {
+    private ProcessDescription initializeDescription() throws Exception {
         LOGGER.debug("initializing description");
         ProcessDescription processDescription = new ProcessDescription();
-        TransactionalAlgorithmRepository repository = (TransactionalAlgorithmRepository) RepositoryManagerSingletonWrapper.getInstance().getRepositoryForAlgorithm(
-                algorithmID);
+        
+       LOGGER.debug("adding process description for version 2.0 of "+algorithmID);
+        ProcessOfferingDocument.ProcessOffering processOffering = TransactionalAlgorithmRepository.getDescription(algorithmID).getProcessOffering();
         processDescription.addProcessDescriptionForVersion(
-                repository.getDescription(algorithmID).getProcessOffering(),
+                processOffering,
                 WPSConfig.VERSION_200);
+        this.description=processDescription;
         return processDescription;
     }
 
-    public ProcessDescription getDescription() {
+    public ProcessDescription getDescription()  {
+        LOGGER.debug("initialize description");
+        if(description==null) {
+            try {
+                initializeDescription();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                LOGGER.warn("description retrieve failed");
+            }
+        }
         return description;
 
     }

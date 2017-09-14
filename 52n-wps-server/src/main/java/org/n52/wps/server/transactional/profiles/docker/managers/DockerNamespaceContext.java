@@ -31,32 +31,44 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.n52.wps.server.transactional.profiles.docker;
+package org.n52.wps.server.transactional.profiles.docker.managers;
 
-import net.opengis.wps.x20.DeployProcessDocument;
-import net.opengis.wps.x20.profile.tb13.eoc.DockerDeploymentProfileType;
-import org.n52.wps.server.transactional.profiles.DeploymentProfile;
+import java.util.Iterator;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author cnl
  */
-public class DockerDeploymentProfile extends DeploymentProfile {
+public class DockerNamespaceContext implements NamespaceContext {
 
-    private  DockerDeploymentProfileType dockerProfile;
+    private static Logger log = LoggerFactory
+            .getLogger(DockerNamespaceContext.class);
 
-    public DockerDeploymentProfileType getDockerProfile() {
-        return dockerProfile;
+    public String getNamespaceURI(String prefix) {
+        if (prefix == null) {
+            throw new NullPointerException("Null prefix");
+        } else if ("eoc".equals(prefix)) {
+            return "http://www.opengis.net/wps/2.0/profile/tb13/eoc";
+        } else if ("xml".equals(prefix)) {
+            return XMLConstants.XML_NS_URI;
+        }
+        return XMLConstants.NULL_NS_URI;
     }
 
-    public void setDockerProfile(DockerDeploymentProfileType dockerProfile) {
-        this.dockerProfile = dockerProfile;
+    @Override
+    public String getPrefix(String namespaceURI) {
+        log.warn("ERROR in NameSpaceContext");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    public DockerDeploymentProfile(DeployProcessDocument deployDom,
-            String processID) {
-        super(deployDom, processID);
-        this.dockerProfile=(DockerDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile();;
+
+    @Override
+    public Iterator getPrefixes(String namespaceURI) {
+        log.warn("ERROR in NameSpaceContext");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

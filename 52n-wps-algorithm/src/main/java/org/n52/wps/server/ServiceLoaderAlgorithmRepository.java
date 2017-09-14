@@ -24,7 +24,6 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
 
 public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 

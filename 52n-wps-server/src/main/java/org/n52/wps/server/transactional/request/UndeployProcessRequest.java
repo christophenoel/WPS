@@ -33,10 +33,18 @@
  */
 package org.n52.wps.server.transactional.request;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.opengis.wps.x20.UndeployProcessDocument;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.response.Response;
+import org.n52.wps.server.transactional.repository.TransactionalAlgorithmRepository;
+import org.n52.wps.server.transactional.response.UndeployProcessResponse;
+import org.n52.wps.server.transactional.util.TransactionalRepositoryManagerSingletonWrapper;
 import org.w3c.dom.Document;
 
 /**
@@ -45,12 +53,24 @@ import org.w3c.dom.Document;
  */
 public class UndeployProcessRequest extends Request {
 
+    private String identifier;
+
     public UndeployProcessRequest(CaseInsensitiveMap map) throws ExceptionReport {
         super(map);
     }
 
     public UndeployProcessRequest(Document doc) throws ExceptionReport {
          super(doc);
+        try {
+            XmlOptions option = new XmlOptions();
+            option.setLoadTrimTextBuffer();
+            UndeployProcessDocument undeploy = UndeployProcessDocument.Factory.parse(doc, option);
+            this.identifier = undeploy.getUndeployProcess().getIdentifier().getStringValue();
+        } catch (XmlException ex) {
+            Logger.getLogger(UndeployProcessRequest.class.getName()).log(Level.SEVERE,
+                    null, ex);
+        }
+        
            }
 
     @Override
@@ -60,7 +80,12 @@ public class UndeployProcessRequest extends Request {
 
     @Override
     public Response call() throws ExceptionReport {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        TransactionalAlgorithmRepository repository = (TransactionalAlgorithmRepository) TransactionalRepositoryManagerSingletonWrapper.getInstance().getRepositoryForAlgorithm(
+                identifier);
+        repository.undeployAlgorithm(identifier);
+         UndeployProcessResponse response = new UndeployProcessResponse(this);
+         response.setSuccess(true);
+        return response;
     }
 
     @Override

@@ -54,6 +54,6 @@ public class BackendController extends BaseConfigurationsController {
                 RemoteDockerHostBackend.class.getName());
         model.addAttribute("configurationModule", module);
         LOGGER.info("Reterived '{}' configuration module.", module.getClass().getName());
-        return "remotedockerhostbackend";
+        return "backend";
     }
 }

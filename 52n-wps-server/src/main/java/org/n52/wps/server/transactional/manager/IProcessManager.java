@@ -60,13 +60,11 @@ package org.n52.wps.server.transactional.manager;
 
 
 import java.util.Collection;
-import net.opengis.wps.x20.ExecuteDocument;
+import java.util.Map;
+import net.opengis.wps.x20.ProcessOfferingDocument;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
-
-
-import org.n52.wps.server.transactional.request.UndeployProcessRequest;
-import org.w3c.dom.Document;
 
 public interface IProcessManager {
 	
@@ -74,8 +72,7 @@ public interface IProcessManager {
 	boolean unDeployProcess(String processID) throws Exception;
 	boolean containsProcess(String processID) throws Exception;
 	Collection<String> getAllProcesses() throws Exception;
-	Document invoke(ExecuteDocument payload, String algorithmID) throws Exception;
-	Document invoke(ExecuteRequest request, String algorithmID) throws Exception;
+	Map<String, IData> invoke(ExecuteRequest request, String algorithmID, ProcessOfferingDocument.ProcessOffering description) throws Exception;
 	boolean deployProcess(DeploymentProfile request) throws Exception;
 	
 	

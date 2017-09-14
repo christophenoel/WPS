@@ -29,8 +29,6 @@
 package org.n52.wps.server.response;
 
 import java.io.InputStream;
-
-import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.DomainMetadataType;
 import net.opengis.ows.x20.LanguageStringType;
 import net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData;
@@ -45,16 +43,14 @@ import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequestV200;
 import org.slf4j.Logger;
@@ -84,6 +80,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
     }
 
     public ExecuteResponseBuilderV200(ExecuteRequestV200 request) throws ExceptionReport{
+        LOGGER.debug("ExecuteResposneBuilder constructor");
         this.request = request;
         resultDoc = ResultDocument.Factory.newInstance();
         resultDoc.addNewResult();
@@ -100,7 +97,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
     }
 
     public void update() throws ExceptionReport {
-
+LOGGER.debug("ExecuteResposneBuilder update");
         // if status succeeded, update response with result
         if (statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())) {
             // the response only include dataInputs, if the property is set to true;
@@ -149,8 +146,13 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
                         String mimeType = getMimeType(definition);
                         String schema = getSchema(definition);
                         String encoding = getEncoding(definition);
-
+                        try {
                         generateComplexDataOutput(responseID, definition.getTransmission().equals(DataTransmissionModeType.REFERENCE), false,  schema, mimeType, encoding, desc.getTitleArray(0));
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                            throw e;
+                        }
                     }
                     else if (desc.getDataDescription() instanceof LiteralDataType) {
                         String mimeType = null;
@@ -247,16 +249,21 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
     }
 
     private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
+        LOGGER.debug("generateComplexDataOutput for "+responseID);
+        LOGGER.debug("size:"+request.getAttachedResult().size());
         IData obj = request.getAttachedResult().get(responseID);
         if(rawData) {
+            LOGGER.debug("raw data option");
             rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, superDescription);
         }
         else {
             OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, superDescription);
             if(asReference) {
+                 LOGGER.debug("as ref option");
                 handler.updateResponseAsReference(resultDoc, (request.getUniqueId()).toString(),mimeType);
             }
             else {
+                 LOGGER.debug("inline option");
                 handler.updateResponseForInlineComplexData(resultDoc);
             }
         }

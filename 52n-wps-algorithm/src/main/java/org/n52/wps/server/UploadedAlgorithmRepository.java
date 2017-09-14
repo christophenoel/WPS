@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.util.CustomClassLoader;
 import org.n52.wps.commons.WPSConfig;

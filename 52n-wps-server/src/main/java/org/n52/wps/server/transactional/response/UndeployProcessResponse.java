@@ -33,10 +33,53 @@
  */
 package org.n52.wps.server.transactional.response;
 
+import java.io.InputStream;
+import net.opengis.wps.x20.UndeployProcessResponseDocument;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.Request;
+import org.n52.wps.server.response.ExecuteResponse;
+import org.n52.wps.server.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author cnl
  */
-public class UndeployProcessResponse {
-    
+public class UndeployProcessResponse extends Response {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponse.class);
+    private boolean success;
+
+    public UndeployProcessResponse(Request request) {
+        super(request);
+    }
+
+    public InputStream getAsStream() throws ExceptionReport {
+        try {
+            //TODO change to Request.getMapValue
+            UndeployProcessResponseDocument response = UndeployProcessResponseDocument.Factory.newInstance();
+            response.setUndeployProcessResponse( UndeployProcessResponseDocument.UndeployProcessResponse.Factory.newInstance());
+            
+            response.getUndeployProcessResponse().setResult(UndeployProcessResponseDocument.UndeployProcessResponse.Result.Factory.newInstance());
+            response.getUndeployProcessResponse().getResult().setSuccess(this.success);
+            return response.newInputStream();
+
+        } catch (Exception e) {
+            throw new ExceptionReport(
+                    "Exception occured while writing response document",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+
+        }
+
+    }
+
+    public void setSuccess(boolean b) {
+        this.success=b;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
 }

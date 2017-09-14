@@ -28,14 +28,12 @@
  */
 package org.n52.wps.server.transactional.profiles.docker.module;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.n52.wps.server.transactional.module.TransactionalAlgorithmRepositoryCMBase;
 import org.n52.wps.server.transactional.profiles.docker.repository.DockerTransactionalAlgorithmRepository;
 
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationKey;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
@@ -76,7 +74,7 @@ public class DockerTransactionalAlgorithmRepositoryCM extends TransactionalAlgor
     private ConfigurationEntry<String> managerEntry = new StringConfigurationEntry(
             "manager", "manager Class Name", "Manager Description to be done",
             true,
-            "org.n52.wps.server.transactional.profiles.docker.DockerManager");
+            "org.n52.wps.server.transactional.profiles.docker.managers.RemoteDockerProcessManager");
 
     protected List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(
             schemaEntry, profileEntry, managerEntry);

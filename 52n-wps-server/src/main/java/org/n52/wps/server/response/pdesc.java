@@ -31,32 +31,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.n52.wps.server.transactional.profiles.docker;
-
-import net.opengis.wps.x20.DeployProcessDocument;
-import net.opengis.wps.x20.profile.tb13.eoc.DockerDeploymentProfileType;
-import org.n52.wps.server.transactional.profiles.DeploymentProfile;
+package org.n52.wps.server.response;
 
 /**
  *
  * @author cnl
  */
-public class DockerDeploymentProfile extends DeploymentProfile {
-
-    private  DockerDeploymentProfileType dockerProfile;
-
-    public DockerDeploymentProfileType getDockerProfile() {
-        return dockerProfile;
-    }
-
-    public void setDockerProfile(DockerDeploymentProfileType dockerProfile) {
-        this.dockerProfile = dockerProfile;
-    }
-    
-    public DockerDeploymentProfile(DeployProcessDocument deployDom,
-            String processID) {
-        super(deployDom, processID);
-        this.dockerProfile=(DockerDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile();;
-    }
+class pdesc {
     
 }

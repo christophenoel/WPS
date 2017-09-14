@@ -36,11 +36,8 @@ import java.util.Map;
 import org.apache.commons.lang.NotImplementedException;
 
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.transactional.repository.TransactionalAlgorithmRepository;
 import org.n52.wps.webapp.api.ClassKnowingModule;
-import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -399,7 +396,7 @@ public class RepositoryManager implements ApplicationContextAware {
             LOGGER.debug(
                     "Looking for process description in repository named: " + repositoryClassName);
             if (repository.containsAlgorithm(processClassName)) {
-                LOGGER.debug("Found algorithm retrieving description");
+                LOGGER.debug("Found algorithm retrieving description of"+processClassName);
                 return repository.getProcessDescription(processClassName);
             }
         }

@@ -18,9 +18,7 @@ package org.n52.wps.server;
 
 import java.util.List;
 import java.util.Map;
-
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.ExceptionReport;
 
 /**
  * @author Bastian Schaeffer, University of Muenster,    Theodor Foerster, ITC

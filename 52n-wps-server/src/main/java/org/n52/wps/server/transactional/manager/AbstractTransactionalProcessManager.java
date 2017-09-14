@@ -34,11 +34,12 @@
 package org.n52.wps.server.transactional.manager;
 
 import java.util.Collection;
-import net.opengis.wps.x20.ExecuteDocument;
+import java.util.Map;
+import net.opengis.wps.x20.ProcessOfferingDocument;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.w3c.dom.Document;
 
 /**
  *
@@ -46,14 +47,14 @@ import org.w3c.dom.Document;
  */
 public abstract class AbstractTransactionalProcessManager implements IProcessManager{
 
-    protected  DeploymentProfile profile;
+    
     protected  String processID;
    
     
 
-    public AbstractTransactionalProcessManager(DeploymentProfile profile) {
-        this.profile=profile;
-        this.processID=profile.getProcessID();
+    public AbstractTransactionalProcessManager(String processID) {
+        
+        this.processID=processID;
         
     }
 
@@ -67,28 +68,12 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
     @Override
 	public abstract Collection<String> getAllProcesses() throws Exception;
     @Override
-	public abstract Document invoke(ExecuteDocument payload, String algorithmID) throws Exception;
-    @Override
-	public abstract Document invoke(ExecuteRequest request, String algorithmID) throws Exception;
+	public abstract Map<String, IData> invoke(ExecuteRequest request, String algorithmID,ProcessOfferingDocument.ProcessOffering description) throws Exception;
     @Override
 	public abstract boolean deployProcess(DeploymentProfile request) throws Exception;
 
         public abstract ConfigurationModule getBackendConfig() throws Exception;
 
-    /**
-     * @return the profile
-     */
-    public DeploymentProfile getProfile() {
-        return profile;
-    }
-
-    /**
-     * @param profile the profile to set
-     */
-    public void setProfile(
-            DeploymentProfile profile) {
-        this.profile = profile;
-    }
 
     /**
      * @return the processID
