@@ -303,7 +303,9 @@ public abstract class TransactionalAlgorithmRepository implements
     }
 
     public boolean removeAlgorithm(Object processID) {
-        throw new NotImplementedException();
+        processDescriptionMap.remove(processID);
+        algorithmMap.remove(processID);
+        return true;
     }
 
     @Override
