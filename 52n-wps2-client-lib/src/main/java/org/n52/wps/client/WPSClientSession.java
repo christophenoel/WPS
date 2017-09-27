@@ -41,15 +41,22 @@ import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.ows.x20.CodeType;
 import net.opengis.ows.x20.OperationDocument;
 import net.opengis.wps.x20.CapabilitiesDocument;
+import net.opengis.wps.x20.DeployProcessDocument;
+import net.opengis.wps.x20.DeployProcessResponseDocument;
 import net.opengis.wps.x20.ExecuteDocument;
 import net.opengis.wps.x20.ExecuteRequestType;
+import net.opengis.wps.x20.GetResultDocument;
+import net.opengis.wps.x20.GetStatusDocument;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 import net.opengis.wps.x20.ProcessOfferingsDocument;
 import net.opengis.wps.x20.ProcessSummaryType;
 import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
+import net.opengis.wps.x20.UndeployProcessDocument;
+import net.opengis.wps.x20.UndeployProcessResponseDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -302,6 +309,39 @@ public class WPSClientSession {
         return retrieveDescriptionViaGET(processIDs, url);
     }
 
+    public Object deploy(String serverURL, DeployProcessDocument doc) throws WPSClientException, XmlException {
+        return retrieveDeployResponseViaPOST(serverURL, doc);
+    }
+
+    public Object undeploy(String serverURL, String processId) throws WPSClientException {
+        UndeployProcessDocument undeploy = UndeployProcessDocument.Factory.newInstance();
+        undeploy.addNewUndeployProcess();
+        undeploy.getUndeployProcess().setService("WPS");
+        undeploy.getUndeployProcess().setVersion(SUPPORTED_VERSION);
+        CodeType identifier = undeploy.getUndeployProcess().addNewIdentifier();
+        identifier.setStringValue(processId);
+        return retrieveUndeployResponseViaPOST(serverURL, undeploy);
+    }
+
+    public Object getStatus(String serverURL, String id) throws WPSClientException, XmlException {
+        GetStatusDocument doc = GetStatusDocument.Factory.newInstance();
+        doc.addNewGetStatus();
+        doc.getGetStatus().setJobID(id);
+        doc.getGetStatus().setService("WPS");
+        doc.getGetStatus().setVersion(SUPPORTED_VERSION);
+        return retrieveGetStatusResponseViaPOST(serverURL, doc);
+    }
+
+    public Object getResult(String serverURL, String id) throws WPSClientException, XmlException {
+        GetResultDocument doc = GetResultDocument.Factory.newInstance();
+
+        doc.addNewGetResult();
+        doc.getGetResult().setJobID(id);
+        doc.getGetResult().setService("WPS");
+        doc.getGetResult().setVersion(SUPPORTED_VERSION);
+        return retrieveGetResultResponseViaPOST(serverURL, doc);
+    }
+
     /**
      * Executes a process at a WPS
      *
@@ -314,7 +354,7 @@ public class WPSClientSession {
      * RawData or an Exception Report
      */
     private Object execute(String serverID, ExecuteDocument execute,
-            boolean rawData) throws WPSClientException {
+            boolean rawData) throws WPSClientException, XmlException, XmlException, XmlException {
         CapabilitiesDocument caps = loggedServices.get(serverID);
         OperationDocument.Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
         String url = null;
@@ -341,7 +381,7 @@ public class WPSClientSession {
      * RawData or an Exception Report
      * @throws WPSClientException if an exception occurred during execute
      */
-    public Object execute(String serverID, ExecuteDocument execute) throws WPSClientException {
+    public Object execute(String serverID, ExecuteDocument execute) throws WPSClientException, XmlException {
         ExecuteRequestType.Response.Enum xx = execute.getExecute().getResponse();
         if (execute.getExecute().getResponse() != null && execute.getExecute().getResponse() == ExecuteRequestType.Response.RAW) {
             return execute(serverID, execute, true);
@@ -374,10 +414,10 @@ public class WPSClientSession {
 
     private ProcessOfferingsDocument retrieveDescriptionViaGET(
             String[] processIDs, String url) throws WPSClientException {
-        
+
         ClientDescribeProcessRequest req = new ClientDescribeProcessRequest();
         req.setIdentifier(processIDs);
-        
+
         String requestURL = req.getRequest(url);
         try {
             URL urlObj = new URL(requestURL);
@@ -385,17 +425,17 @@ public class WPSClientSession {
             Document doc = checkInputStream(is);
             return ProcessOfferingsDocument.Factory.parse(doc, options);
         } catch (MalformedURLException e) {
-            
+
             e.printStackTrace();
             throw new WPSClientException("URL seems not to be valid", e);
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             throw new WPSClientException("Error occured while receiving data", e);
         } catch (XmlException e) {
             e.printStackTrace();
-            
+
             throw new WPSClientException(
                     "Error occured while parsing ProcessDescription document", e);
         }
@@ -468,6 +508,80 @@ public class WPSClientSession {
 
     }
 
+    private Object retrieveGetStatusResponseViaPOST(String url,
+            GetStatusDocument doc) throws WPSClientException, XmlException {
+         ExceptionReportDocument erDoc = null;
+        Document documentObj=null;
+        try {
+            LOGGER.debug(doc.xmlText());
+            InputStream is = retrieveDataViaPOST(doc, url);
+
+             documentObj = checkInputStream(is);
+             erDoc = null;
+
+            return StatusInfoDocument.Factory.parse(documentObj);
+        } catch (WPSClientException e) {
+            LOGGER.debug(e.getServerException().xmlText());
+            return e.getServerException();
+        }
+    }
+
+    private Object retrieveGetResultResponseViaPOST(String url,
+            GetResultDocument doc) throws WPSClientException, XmlException {
+        ExceptionReportDocument erDoc = null;
+        Document documentObj=null;
+        try {
+            LOGGER.debug(doc.xmlText());
+            InputStream is = retrieveDataViaPOST(doc, url);
+             documentObj = checkInputStream(is);
+            return ResultDocument.Factory.parse(documentObj);
+        } catch (WPSClientException e) {
+            LOGGER.debug(e.getServerException().xmlText());
+            return e.getServerException();
+        }
+    }
+
+    private Object retrieveDeployResponseViaPOST(String url,
+            DeployProcessDocument doc) throws WPSClientException, XmlException {
+        ExceptionReportDocument erDoc = null;
+        Document documentObj=null;
+        try {
+            LOGGER.debug(doc.xmlText());
+            InputStream is = retrieveDataViaPOST(doc, url);
+             documentObj = checkInputStream(is);
+            erDoc = null;
+            return DeployProcessResponseDocument.Factory.parse(documentObj);
+        } catch (WPSClientException e) {
+            LOGGER.debug(e.getServerException().xmlText());
+            return e.getServerException();
+        }
+    }
+
+    private Object retrieveUndeployResponseViaPOST(String url,
+            UndeployProcessDocument doc) throws WPSClientException {
+            ExceptionReportDocument erDoc = null;
+        Document documentObj=null;
+   try {
+        LOGGER.debug(doc.xmlText());
+        InputStream is = retrieveDataViaPOST(doc, url);
+
+         documentObj = checkInputStream(is);
+         erDoc = null;
+        
+
+            return UndeployProcessResponseDocument.Factory.parse(documentObj);
+        } catch (XmlException e) {
+            try {
+                erDoc = ExceptionReportDocument.Factory.parse(documentObj);
+                LOGGER.warn(erDoc.xmlText());
+            } catch (XmlException e1) {
+                throw new WPSClientException(
+                        "Error occured while parsing executeResponse", e);
+            }
+            return erDoc;
+        }
+    }
+
     /**
      * either an ExecuteResponseDocument or an InputStream if asked for RawData
      * or an Exception Report
@@ -482,28 +596,27 @@ public class WPSClientSession {
      * @throws WPSClientException if an exception occurred during execute
      */
     private Object retrieveExecuteResponseViaPOST(String url,
-            ExecuteDocument doc, boolean rawData) throws WPSClientException {
+            ExecuteDocument doc, boolean rawData) throws WPSClientException, XmlException {
         InputStream is = retrieveDataViaPOST(doc, url);
         if (rawData) {
             return is;
         }
-        Document documentObj = checkInputStream(is);
-        ExceptionReportDocument erDoc = null;
-        try {
+            ExceptionReportDocument erDoc = null;
+        Document documentObj=null;
+   try {
+        
+         documentObj = checkInputStream(is);
+         erDoc = null;
+        
             if (doc.getExecute().getMode() == ExecuteRequestType.Mode.ASYNC) {
                 return StatusInfoDocument.Factory.parse(documentObj);
-            } else  {
+            } else {
                 return ResultDocument.Factory.parse(documentObj);
             }
 
-        } catch (XmlException e) {
-            try {
-                erDoc = ExceptionReportDocument.Factory.parse(documentObj);
-            } catch (XmlException e1) {
-                throw new WPSClientException(
-                        "Error occured while parsing executeResponse", e);
-            }
-            return erDoc;
+        } catch (WPSClientException e) {
+            LOGGER.debug(e.getServerException().xmlText());
+            return e.getServerException();
         }
     }
 
@@ -525,38 +638,23 @@ public class WPSClientSession {
      * @return either an ExecuteResponseDocument or an InputStream if asked for
      * RawData or an Exception Report
      * @throws WPSClientException if an exception occurred during execute
-
-    public Object executeViaGET(String url, String executeAsGETString) throws WPSClientException {
-        url = url + executeAsGETString;
-        try {
-            URL urlObj = new URL(url);
-            InputStream is = urlObj.openStream();
-
-            if (executeAsGETString.toUpperCase().contains("RAWDATA")) {
-                return is;
-            }
-            Document doc = checkInputStream(is);
-            ExceptionReportDocument erDoc = null;
-            try {
-                return ExecuteResponseDocument.Factory.parse(doc);
-            } catch (XmlException e) {
-                try {
-                    erDoc = ExceptionReportDocument.Factory.parse(doc);
-                } catch (XmlException e1) {
-                    throw new WPSClientException(
-                            "Error occured while parsing executeResponse", e);
-                }
-                throw new WPSClientException(
-                        "Error occured while parsing executeResponse", erDoc);
-            }
-        } catch (MalformedURLException e) {
-            throw new WPSClientException(
-                    "Capabilities URL seems to be unvalid: " + url, e);
-        } catch (IOException e) {
-            throw new WPSClientException(
-                    "Error occured while retrieving capabilities from url: " + url,
-                    e);
-        }
-
-    }*/
+     *
+     * public Object executeViaGET(String url, String executeAsGETString) throws
+     * WPSClientException { url = url + executeAsGETString; try { URL urlObj =
+     * new URL(url); InputStream is = urlObj.openStream();
+     *
+     * if (executeAsGETString.toUpperCase().contains("RAWDATA")) { return is; }
+     * Document doc = checkInputStream(is); ExceptionReportDocument erDoc =
+     * null; try { return ExecuteResponseDocument.Factory.parse(doc); } catch
+     * (XmlException e) { try { erDoc =
+     * ExceptionReportDocument.Factory.parse(doc); } catch (XmlException e1) {
+     * throw new WPSClientException( "Error occured while parsing
+     * executeResponse", e); } throw new WPSClientException( "Error occured
+     * while parsing executeResponse", erDoc); } } catch (MalformedURLException
+     * e) { throw new WPSClientException( "Capabilities URL seems to be unvalid:
+     * " + url, e); } catch (IOException e) { throw new WPSClientException(
+     * "Error occured while retrieving capabilities from url: " + url, e); }
+     *
+     * }
+     */
 }
