@@ -852,3 +852,5 @@ INSERT INTO CONFIGURATIONENTRY VALUES('hostport','org.n52.wps.webapp.entities.Se
 --
 INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.generator.OMGeneratorCM', TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('int_.esa.mep.wps.algorithm.IncrementConversion','org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('int_.esa.mep.wps.algorithm.DecrementConversion','org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM',TRUE);

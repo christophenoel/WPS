@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessOfferings xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
+	<wps:ProcessOffering jobControlOptions="async-execute dismiss" outputTransmission="value reference">
+		<wps:Process>
+			<ows:Title>Convert EO Data</ows:Title>
+			<ows:Abstract>Convert EO Data process called by the Data Manager. Note that all parameter lists must have the same number of entries.</ows:Abstract>
+			<ows:Identifier>IncrementConversion</ows:Identifier>
+			<wps:Input>
+				<ows:Title>Collection</ows:Title>
+				<ows:Abstract>Collection.</ows:Abstract>
+				<ows:Identifier>CollectionId</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Source Store Type</ows:Title>
+				<ows:Abstract>Source Store Type</ows:Abstract>
+				<ows:Identifier>SourceStoreType</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Source Store Root</ows:Title>
+				<ows:Abstract>Source Store Root</ows:Abstract>
+				<ows:Identifier>SourceStoreRoot</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Target Store Type</ows:Title>
+				<ows:Abstract>Target Store Type</ows:Abstract>
+				<ows:Identifier>TargetStoreType</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Target Store Root</ows:Title>
+				<ows:Abstract>Target Store Root</ows:Abstract>
+				<ows:Identifier>TargetStoreRoot</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Inputs List Location</ows:Title>
+				<ows:Abstract>Inputs List Location</ows:Abstract>
+				<ows:Identifier>Inputs</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Title>Outputs List Location</ows:Title>
+				<ows:Abstract>Outputs List Location</ows:Abstract>
+				<ows:Identifier>Outputs</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:string">string</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<!-- Size needed? -->
+			<wps:Output>
+				<ows:Title>Size</ows:Title>
+				<ows:Abstract>Total size of requested files/directories on the Store (HDFS, NFS) file system.</ows:Abstract>
+				<ows:Identifier>Size</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:long">long</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Output>
+			<wps:Output>
+				<ows:Title>Sucess</ows:Title>
+				<ows:Abstract>Sucess</ows:Abstract>
+				<ows:Identifier>Sucess</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/xml" default="true"/>
+					<LiteralDataDomain>
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="xs:boolean">boolean</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Output>
+		</wps:Process>
+	</wps:ProcessOffering>
+</wps:ProcessOfferings>
