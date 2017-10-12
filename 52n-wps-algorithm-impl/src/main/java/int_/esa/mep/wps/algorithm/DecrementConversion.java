@@ -80,6 +80,17 @@ public class DecrementConversion extends AbstractSelfDescribingAlgorithm {
         return identifierList;
     }
 
+      private static String removeNfsPrefix(String nfsUrl) {
+        if (nfsUrl != null && !nfsUrl.isEmpty()) {
+            nfsUrl = nfsUrl.trim();
+            if (nfsUrl.startsWith("file://")) {
+                nfsUrl = nfsUrl.substring("file://".length());
+            }
+
+        }
+        return nfsUrl;
+    }
+
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         String inputFile = ((LiteralStringBinding) inputData.get("Inputs").get(0)).getPayload();
@@ -108,6 +119,7 @@ public class DecrementConversion extends AbstractSelfDescribingAlgorithm {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
             String input = reader.readLine();
+            input = removeNfsPrefix(input);
             System.out.println("MNG: input = " + input);
 
             while (input != null && input.trim().length() > 0) {

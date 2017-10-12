@@ -54,6 +54,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -61,6 +62,9 @@ import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
  * @author cnl
  */
 public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
+
+      private static org.slf4j.Logger log = LoggerFactory
+            .getLogger(IncrementConversion.class);
 
     @Override
     public List<String> getInputIdentifiers() {
@@ -82,8 +86,20 @@ public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
         return identifierList;
     }
 
+    private static String removeNfsPrefix(String nfsUrl) {
+        if (nfsUrl != null && !nfsUrl.isEmpty()) {
+            nfsUrl = nfsUrl.trim();
+            if (nfsUrl.startsWith("file://")) {
+                nfsUrl = nfsUrl.substring("file://".length());
+            }
+
+        }
+        return nfsUrl;
+    }
+
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData)  {
+        log.debug("Run for IncrementConversion");
         String inputFile = ((LiteralStringBinding) inputData.get("Inputs").get(0)).getPayload();
         String outputFile = ((LiteralStringBinding) inputData.get("Outputs").get(
                 0)).getPayload();
@@ -108,6 +124,7 @@ public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
         try {BufferedReader reader = new BufferedReader( new FileReader(inputFile));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(                       outputFile));
             String input = reader.readLine();
+            input = removeNfsPrefix(input);
             System.out.println("MNG: input = " + input);
 
             while (input != null && input.trim().length() > 0) {
