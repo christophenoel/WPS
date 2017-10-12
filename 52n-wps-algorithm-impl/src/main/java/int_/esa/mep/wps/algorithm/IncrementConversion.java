@@ -26,13 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package int_.esa.mep.wps.algorithm;
-
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -56,14 +55,13 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.slf4j.LoggerFactory;
 
-
 /**
  *
  * @author cnl
  */
 public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
 
-      private static org.slf4j.Logger log = LoggerFactory
+    private static org.slf4j.Logger log = LoggerFactory
             .getLogger(IncrementConversion.class);
 
     @Override
@@ -98,31 +96,18 @@ public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
     }
 
     @Override
-    public Map<String, IData> run(Map<String, List<IData>> inputData)  {
+    public Map<String, IData> run(Map<String, List<IData>> inputData) {
         log.debug("Run for IncrementConversion");
         String inputFile = ((LiteralStringBinding) inputData.get("Inputs").get(0)).getPayload();
         String outputFile = ((LiteralStringBinding) inputData.get("Outputs").get(
                 0)).getPayload();
         System.out.println(
                 "MNG: dummyConvert (inputFile = " + inputFile + ", outputFile = " + outputFile + ")");
-        File file = new File(outputFile);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                Logger.getLogger(IncrementConversion.class.getName()).log(Level.SEVERE,
-                        null, ex);
-                return null;
-            }
-        }
-        /*
-         change permission to 777 for all the users
-         */
-        file.setExecutable(true, false);
-        file.setReadable(true, false);
-        file.setWritable(true, false);
-        try {BufferedReader reader = new BufferedReader( new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(                       outputFile));
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(outputFile));
             String input = reader.readLine();
             input = removeNfsPrefix(input);
             System.out.println("MNG: input = " + input);
@@ -174,6 +159,8 @@ public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
                     Files.copy(inputPath, Paths.get(output),
                             StandardCopyOption.REPLACE_EXISTING);
                 }
+        System.out.println(
+                "MNG: dummyConvert writing "+output+ "to file "+outputFile);
 
                 writer.write(output);
                 writer.newLine();
@@ -182,11 +169,17 @@ public class IncrementConversion extends AbstractSelfDescribingAlgorithm {
 
                 System.out.println("MNG: input = " + input);
             }
+            writer.flush();
+writer.close();
+System.out.println("Closed writer");
         } catch (IOException ex) {
-            Logger.getLogger(IncrementConversion.class.getName()).log(Level.SEVERE,
+            System.out.println(ex);
+            Logger.getLogger(IncrementConversion.class.getName()).log(
+                    Level.SEVERE,
                     null, ex);
-          return null;
+            return null;
         }
+
         HashMap<String, IData> results = new HashMap<String, IData>();
         results.put("Success", new LiteralBooleanBinding(Boolean.TRUE));
 

@@ -177,6 +177,8 @@ public class DecrementConversion extends AbstractSelfDescribingAlgorithm {
 
                 System.out.println("MNG: input = " + input);
             }
+            writer.flush();
+            writer.close();
         } catch (IOException ex) {
             Logger.getLogger(DecrementConversion.class.getName()).log(
                     Level.SEVERE,
