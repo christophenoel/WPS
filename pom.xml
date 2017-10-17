@@ -852,6 +852,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-eoc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-algorithm</artifactId>
                 <version>${project.version}</version>
             </dependency>
