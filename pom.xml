@@ -1101,7 +1101,22 @@
                 </plugins>
             </build>
         </profile>
-
+  <profile>
+            <id>deploy-to-spacebel</id>
+            <distributionManagement>
+                <repository>
+                    <id>spb-mep-release</id>
+                    <name>SBP Mep Releases Repository</name>
+                    <url>http://mv1.spacebel.be:8081/artifactory/wpst2-libs/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>spb-mep-snapshot</id>
+                    <name>SBP Mep Snapshots Repository</name>
+                    <url>http://mv1.spacebel.be:8081/artifactory/wpst2-libs/</url>
+                    <uniqueVersion>true</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
     </profiles>
      
 </project>
