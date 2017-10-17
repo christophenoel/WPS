@@ -40,13 +40,29 @@
 
     <distributionManagement>
         <repository>
-            <id>n52-releases-dist</id>
-            <url>dav:https://52north.org/maven/repo/releases/</url>
+            <id>spb-mep-release</id>
+            <name>SBP Mep Releases Repository</name>
+            <url>http://mv1.spacebel.be:8081/artifactory/wpst2-libs/</url>
         </repository>
         <snapshotRepository>
-            <id>n52-snapshots-dist</id>
-            <url>dav:https://52north.org/maven/repo/snapshots/</url>
+            <id>spb-mep-snapshot</id>
+            <name>SBP Mep Snapshots Repository</name>
+            <url>http://mv1.spacebel.be:8081/artifactory/wpst2-libs/</url>
+            <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
+        <!--
+        <repository>
+            <id>vito-release</id>
+            <name>VITO Repository</name>
+            <url>http://artifactory.vgt.vito.be/ext-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>vito-snapshot</id>
+            <name>VITO Snapshot Repository</name>
+            <url>http://artifactory.vgt.vito.be/ext-snapshot-local</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+        -->
     </distributionManagement>
     <repositories>		
         <repository>
@@ -236,10 +252,12 @@
         <module>52n-wps-database</module>
         <module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
+        <module>52n-wps2-client-lib</module>
         <module>52n-wps-sextante</module>
         <module>52n-wps-grass</module>
         <module>52n-wps-r</module>
-	 
+		<module>52n-wps-eoc</module>
+        
     </modules>
     <properties>
         <java-version>1.8</java-version>
@@ -895,7 +913,12 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.wps</groupId>
-                <artifactId>52n-xml-wps-v20</artifactId>
+                <artifactId>52n-xml-wps-t-v20</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.wps</groupId>
+                <artifactId>52n-xml-wps-t-eoc</artifactId>
                 <version>2.2.0</version>
             </dependency>
             <dependency>
@@ -1074,4 +1097,5 @@
         </profile>
 
     </profiles>
+     
 </project>

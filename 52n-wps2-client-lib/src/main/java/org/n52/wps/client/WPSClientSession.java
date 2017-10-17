@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x20.CodeType;
+import net.opengis.ows.x20.ExceptionReportDocument;
 import net.opengis.ows.x20.OperationDocument;
 import net.opengis.wps.x20.CapabilitiesDocument;
 import net.opengis.wps.x20.DeployProcessDocument;
@@ -78,7 +78,7 @@ public class WPSClientSession {
 
     private static Logger LOGGER = LoggerFactory.getLogger(
             WPSClientSession.class);
-    private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
+    private static final String OGC_OWS_URI = "http://www.opengis.net/ows/2.0";
     private static String SUPPORTED_VERSION = "2.0.0";
 
     private static WPSClientSession session;
@@ -480,6 +480,7 @@ public class WPSClientSession {
                     throw new WPSClientException(
                             "Error occured while executing query", exceptionDoc);
                 } catch (XmlException e) {
+                    e.printStackTrace();
                     throw new WPSClientException(
                             "Error while parsing ExceptionReport retrieved from server",
                             e);
@@ -536,7 +537,6 @@ public class WPSClientSession {
              documentObj = checkInputStream(is);
             return ResultDocument.Factory.parse(documentObj);
         } catch (WPSClientException e) {
-            LOGGER.debug(e.getServerException().xmlText());
             return e.getServerException();
         }
     }

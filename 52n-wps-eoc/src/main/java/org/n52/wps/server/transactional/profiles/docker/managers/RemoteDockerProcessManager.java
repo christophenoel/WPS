@@ -76,8 +76,6 @@ import net.opengis.wps.x20.LiteralDataType;
 import net.opengis.wps.x20.OutputDefinitionType;
 import net.opengis.wps.x20.OutputDescriptionType;
 import net.opengis.wps.x20.ProcessOfferingDocument;
-import net.opengis.wps.x20.profile.tb13.eoc.DockerImageDocument;
-import net.opengis.wps.x20.profile.tb13.eoc.DockerImageDocument.DockerImage;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
@@ -167,7 +165,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                 db.getPassword());
 
         log.debug("Parse docker image");
-        DockerImage dockerImage = parseDockerImage();
+        String dockerImageReference = parseDockerImage();
         docker = getDockerConnection();
         // get the ssh client connected to the host with NFS access
         log.debug("Getting SSH connection to the host connected to NFS stores");
@@ -188,10 +186,11 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         handleOutputs(execute, description); // TODO CHANGE
 
         // Get the image URL
-        String imageName = dockerImage.getReference();
+        String imageName = dockerImageReference;
         log.debug("pulling image:" + imageName);
         docker.pull(imageName);
-        log.debug("Create Env property file");
+     //   ImageInfo infoTest = docker.inspectImage("test");
+       
         writeEnvPropertyFile(env);
         log.debug("Env variables passed to the containers");
         ContainerConfig.Builder build = ContainerConfig.builder().image(
@@ -511,30 +510,19 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         return docker;
     }
 
-    private DockerImage parseDockerImage() throws XPathExpressionException, XmlException {
+    private String parseDockerImage() throws XPathExpressionException, XmlException {
         MetadataType appContextMetadata = DockerUtil.getMetadataContentByKey(
-                "http://www.opengis.net/tb13/eoc/applicationContext",
+                "http://www.opengis.net/wps/2.0/profile/tb13/eoc",
                 description);
         log.debug("Parsing appContext " + appContextMetadata.toString());
         XPath xPath = XPathFactory.newInstance().newXPath();
         NamespaceContext context = DockerUtil.getTB13NamespaceContext();
         log.debug("Context:" + context.getNamespaceURI("eoc"));
         xPath.setNamespaceContext(context);
-        Node node = (Node) xPath.evaluate("//eoc:DockerImage",
+        Node node = (Node) xPath.evaluate("//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/DockerImage']/ows:AdditionalParameters/ows:AdditionalParameter/ows:Name[text()='eoc:reference']/../ows:Value",
                 appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
-        DockerImageDocument dockerImage = null;
-        try {
-
-            if (node == null) {
-                log.warn("node item 0 is null!");
-            }
-            dockerImage = DockerImageDocument.Factory.parse(
-                    node);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return dockerImage.getDockerImage();
+        log.debug("Node content is :"+node.getTextContent());
+return node.getTextContent();
     }
 
     /**

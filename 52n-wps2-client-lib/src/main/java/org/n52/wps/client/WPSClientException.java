@@ -28,8 +28,10 @@
  */
 package org.n52.wps.client;
 
+import net.opengis.ows.x20.ExceptionReportDocument;
 
-import net.opengis.ows.x11.ExceptionReportDocument;
+
+
 
 public class WPSClientException extends Exception {
     // Universal version identifier for a Serializable class.

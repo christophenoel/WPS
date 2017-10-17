@@ -33,20 +33,19 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import net.opengis.wps.x100.CapabilitiesDocument;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
@@ -346,8 +345,11 @@ public class WebProcessingService implements ServletContextAware,
         try {
             LOGGER.debug(exception.toString());
             // DO NOT MIX getWriter and getOuputStream!
-            exception.getExceptionDocument(version).save(res.getOutputStream(),
+            
+            InputStream is = exception.getExceptionDocument(version).newInputStream(
                     XMLBeansHelper.getXmlOptions());
+            IOUtils.copy(is, res.getOutputStream());
+            is.close();
 
             res.setStatus(exception.getHTTPStatusCode());
         } catch (IOException e) {

@@ -34,7 +34,7 @@
 package org.n52.wps.server.transactional.response;
 
 import java.io.InputStream;
-import net.opengis.wps.x20.UndeployProcessResponseDocument;
+import net.opengis.wps.x20.UndeployResultDocument;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.response.ExecuteResponse;
@@ -58,11 +58,9 @@ public class UndeployProcessResponse extends Response {
     public InputStream getAsStream() throws ExceptionReport {
         try {
             //TODO change to Request.getMapValue
-            UndeployProcessResponseDocument response = UndeployProcessResponseDocument.Factory.newInstance();
-            response.setUndeployProcessResponse( UndeployProcessResponseDocument.UndeployProcessResponse.Factory.newInstance());
-            
-            response.getUndeployProcessResponse().setResult(UndeployProcessResponseDocument.UndeployProcessResponse.Result.Factory.newInstance());
-            response.getUndeployProcessResponse().getResult().setSuccess(this.success);
+            UndeployResultDocument response = UndeployResultDocument.Factory.newInstance();
+            response.addNewUndeployResult();
+            response.getUndeployResult().setUndeploymentDone(true);
             return response.newInputStream();
 
         } catch (Exception e) {

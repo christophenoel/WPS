@@ -51,9 +51,18 @@ public class DockerNamespaceContext implements NamespaceContext {
     public String getNamespaceURI(String prefix) {
         if (prefix == null) {
             throw new NullPointerException("Null prefix");
+        } else if ("ows".equals(prefix)) {
+            return "http://www.opengis.net/ows/2.0";
+        }  else if ("owc".equals(prefix)) {
+            return "http://www.opengis.net/owc/1.0";
+        }  else if ("eoc".equals(prefix)) {
+            return "http://www.opengis.net/wps/2.0/profile/tb13/eoc";
+        } else if ("atom".equals(prefix)) {
+            return "http://www.w3.org/2005/Atom";
         } else if ("eoc".equals(prefix)) {
             return "http://www.opengis.net/wps/2.0/profile/tb13/eoc";
-        } else if ("xml".equals(prefix)) {
+        } 
+        else if ("xml".equals(prefix)) {
             return XMLConstants.XML_NS_URI;
         }
         return XMLConstants.NULL_NS_URI;

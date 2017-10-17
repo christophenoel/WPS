@@ -36,19 +36,13 @@ package org.n52.wps.server;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.LogStream;
-import com.spotify.docker.client.messages.ContainerConfig;
-import com.spotify.docker.client.messages.ContainerCreation;
-import com.spotify.docker.client.messages.ContainerExit;
-import com.spotify.docker.client.messages.ContainerInfo;
-import com.spotify.docker.client.messages.Image;
+import com.spotify.docker.client.messages.ImageInfo;
 import com.spotify.docker.client.messages.Info;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import net.opengis.ows.x20.MetadataType;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataInputType;
@@ -214,13 +208,16 @@ public class DockerTester {
     @Test
 
     public void docker() throws Exception {
-        final String imageName = "busybox";
+        final String imageName = "registry.hub.docker.com/cnlspacebel/landcover";
         System.out.println("Starting test Docker");
         DockerClient docker = DefaultDockerClient.builder().uri(
                 URI.create("https://172.17.2.165:2376/")).dockerCertificates(
                 new DockerCertificates(Paths.get(
                         "D:\\vm1"))).build();
         Info myinfo = docker.info();
+        ImageInfo iinfo = docker.inspectImage(imageName);
+        System.out.println("INFO IMAGE OS:"+iinfo.os());
+        /**
         System.out.println(myinfo.toString());
         // List<ImageSearchResult> searchResult = docker.searchImages("busybox");
         List<Image> list = docker.listImages(

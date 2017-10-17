@@ -27,12 +27,14 @@ Public License for more details.
 
 This project includes:
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS 2.0 Client Library under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
   52North WPS Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Client Library under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Commons under Apache License, Version 2.0
   52North WPS Configuration API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS EOC Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -174,8 +176,9 @@ This project includes:
   Objenesis under MIT License
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC WPS EOC Profile schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
-  OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC WPS Transactional Extension schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.n52.wps:gmlpacket-2.0 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)

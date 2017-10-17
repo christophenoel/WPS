@@ -58,12 +58,11 @@ package org.n52.wps.server.transactional.profiles;
 
 
 import java.util.logging.Logger;
-
 import net.opengis.wps.x20.DeployProcessDocument;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 
 
-public abstract class DeploymentProfile {
+public  class DeploymentProfile {
 
     private static Logger LOGGER = Logger
             .getLogger(DeploymentProfile.class.getName());
@@ -75,7 +74,7 @@ public abstract class DeploymentProfile {
     public DeploymentProfile(DeployProcessDocument deployDom, String processID) {
         this.processID = processID;
         this.processOffering = deployDom.getDeployProcess().getProcessOffering();
-        this.schema = deployDom.getDeployProcess().getDeploymentProfile().getSchema().getReference();
+        this.schema = deployDom.getDeployProcess().getDeploymentProfile().getDeploymentProfileName();
     }
 
     public String getSchema() {

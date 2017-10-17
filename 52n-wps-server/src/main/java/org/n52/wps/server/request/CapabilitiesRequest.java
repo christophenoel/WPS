@@ -29,7 +29,6 @@
 package org.n52.wps.server.request;
 
 import java.util.ArrayList;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
@@ -53,18 +52,19 @@ public class CapabilitiesRequest extends Request {
     /**
      * Creates a CapabilitesRequest based on a Map (HTTP_GET)
      *
-     * @param ciMap
-     *        The client input
+     * @param ciMap The client input
      * @throws ExceptionReport if an exception occurred during construction
      */
     public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
         //Fix for https://bugzilla.52north.org/show_bug.cgi?id=907
-        String providedAcceptVersionsString = Request.getMapValue("acceptversions", ciMap, false);
+        String providedAcceptVersionsString = Request.getMapValue(
+                "acceptversions", ciMap, false);
 
         if (providedAcceptVersionsString != null) {
 
-            String[] providedAcceptVersions = providedAcceptVersionsString.split(",");
+            String[] providedAcceptVersions = providedAcceptVersionsString.split(
+                    ",");
 
             if (providedAcceptVersions != null) {
                 map.put("version", providedAcceptVersions);
@@ -74,6 +74,7 @@ public class CapabilitiesRequest extends Request {
 
     public CapabilitiesRequest(Document doc) throws ExceptionReport {
         super(doc);
+        LOGGER.debug("creating cap request from doc");
         this.map = new CaseInsensitiveMap();
 
         Node fc = this.doc.getFirstChild();
@@ -94,7 +95,8 @@ public class CapabilitiesRequest extends Request {
         for (int i = 0; i < nList.getLength(); i++) {
             Node n = nList.item(i);
             if (n.getLocalName() != null) {
-                if (n.getLocalName().equalsIgnoreCase(ACCEPT_VERSIONS_ELEMENT_NAME)) {
+                if (n.getLocalName().equalsIgnoreCase(
+                        ACCEPT_VERSIONS_ELEMENT_NAME)) {
 
                     NodeList nList2 = n.getChildNodes();
 
@@ -102,7 +104,8 @@ public class CapabilitiesRequest extends Request {
                         Node n2 = nList2.item(j);
 
                         if (n2.getLocalName() != null
-                                && n2.getLocalName().equalsIgnoreCase(RequestHandler.VERSION_ATTRIBUTE_NAME)) {
+                                && n2.getLocalName().equalsIgnoreCase(
+                                        RequestHandler.VERSION_ATTRIBUTE_NAME)) {
                             versionList.add(n2.getTextContent());
                         }
                     }
@@ -111,10 +114,11 @@ public class CapabilitiesRequest extends Request {
             }
         }
 
-        if ( !versionList.isEmpty()) {
-            this.map.put(PARAM_VERSION, versionList.toArray(new String[versionList.size()]));
+        if (!versionList.isEmpty()) {
+            this.map.put(PARAM_VERSION, versionList.toArray(
+                    new String[versionList.size()]));
         }
-
+        LOGGER.debug("successful request creation");
     }
 
     /**
@@ -125,15 +129,18 @@ public class CapabilitiesRequest extends Request {
      */
     public boolean validate() throws ExceptionReport {
         String services = getMapValue(PARAM_SERVICE, true);
-        if ( !services.equalsIgnoreCase("wps")) {
-            throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services,
-                                      ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+        if (!services.equalsIgnoreCase("wps")) {
+            throw new ExceptionReport(
+                    "Parameter <service> is not correct, expected: WPS , got: " + services,
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "service");
         }
 
         String[] versions = getMapArray(PARAM_VERSION, false);
-        if ( !requireVersion(WPSConfig.SUPPORTED_VERSIONS, false)) {
-            throw new ExceptionReport("Requested versions are not supported, you requested: "
-                    + Request.accumulateString(versions), ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
+        if (!requireVersion(WPSConfig.SUPPORTED_VERSIONS, false)) {
+            throw new ExceptionReport(
+                    "Requested versions are not supported, you requested: "
+                    + Request.accumulateString(versions),
+                    ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
         }
 
         return true;
@@ -142,7 +149,8 @@ public class CapabilitiesRequest extends Request {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * @throws ExceptionReport if an exception occurred while handling the
+     * request
      * @return Response The result of the computation
      */
     public Response call() throws ExceptionReport {

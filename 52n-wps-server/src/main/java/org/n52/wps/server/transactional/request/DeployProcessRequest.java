@@ -35,8 +35,6 @@ package org.n52.wps.server.transactional.request;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import net.opengis.wps.x20.AbstractDeploymentProfileType;
 import net.opengis.wps.x20.DeployProcessDocument;
 import net.opengis.wps.x20.DescriptionType;
 import net.opengis.wps.x20.ProcessOfferingDocument;
@@ -45,7 +43,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.response.Response;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
@@ -67,6 +64,7 @@ public class DeployProcessRequest extends Request {
             DeployProcessRequest.class.getName());
 
     private DeployProcessDocument deployDom;
+    
     private DeploymentProfile deploymentProfile;
 
     public DeployProcessRequest(CaseInsensitiveMap map) throws ExceptionReport {
@@ -97,13 +95,14 @@ public class DeployProcessRequest extends Request {
         validate();
         LOGGER.debug("DeployProcessRequest validation done");
         // Extract deployment profile
-        AbstractDeploymentProfileType deploymentProfile = this.deployDom.getDeployProcess().getDeploymentProfile();
+        deploymentProfile = new DeploymentProfile(deployDom, deployDom.getDeployProcess().getProcessOffering().getProcess().getIdentifier().getStringValue());
         // Extract process description (offering)
         ProcessOfferingDocument.ProcessOffering processOffering = this.deployDom.getDeployProcess().getProcessOffering();
         // Get schema reference of the deployment profile.
-        String schema = deploymentProfile.getSchema().getReference();
+        String schema = this.deployDom.getDeployProcess().getDeploymentProfile().getDeploymentProfileName();
         DescriptionType descriptionType = processOffering.getProcess();
         LOGGER.debug("DeployProcessRequest looking deployment profile");
+        /**
         String deployementProfileClass;
         try {
             // Question TransactionRepositoryManager to get the deployment profile class (defined in DB configuration module)
@@ -124,6 +123,7 @@ public class DeployProcessRequest extends Request {
             throw new ExceptionReport("Error ",
                     ExceptionReport.MISSING_PARAMETER_VALUE, e);
         }
+        * */
     }
 
     public DeployProcessDocument getDeployDom() {
