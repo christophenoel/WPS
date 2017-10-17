@@ -45,7 +45,7 @@ import net.opengis.ows.x20.ExceptionReportDocument;
 import net.opengis.ows.x20.OperationDocument;
 import net.opengis.wps.x20.CapabilitiesDocument;
 import net.opengis.wps.x20.DeployProcessDocument;
-import net.opengis.wps.x20.DeployProcessResponseDocument;
+import net.opengis.wps.x20.DeployResultDocument;
 import net.opengis.wps.x20.ExecuteDocument;
 import net.opengis.wps.x20.ExecuteRequestType;
 import net.opengis.wps.x20.GetResultDocument;
@@ -56,7 +56,7 @@ import net.opengis.wps.x20.ProcessSummaryType;
 import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 import net.opengis.wps.x20.UndeployProcessDocument;
-import net.opengis.wps.x20.UndeployProcessResponseDocument;
+import net.opengis.wps.x20.UndeployResultDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -550,7 +550,7 @@ public class WPSClientSession {
             InputStream is = retrieveDataViaPOST(doc, url);
              documentObj = checkInputStream(is);
             erDoc = null;
-            return DeployProcessResponseDocument.Factory.parse(documentObj);
+            return DeployResultDocument.Factory.parse(documentObj);
         } catch (WPSClientException e) {
             LOGGER.debug(e.getServerException().xmlText());
             return e.getServerException();
@@ -569,7 +569,7 @@ public class WPSClientSession {
          erDoc = null;
         
 
-            return UndeployProcessResponseDocument.Factory.parse(documentObj);
+            return UndeployResultDocument.Factory.parse(documentObj);
         } catch (XmlException e) {
             try {
                 erDoc = ExceptionReportDocument.Factory.parse(documentObj);
