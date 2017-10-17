@@ -38,7 +38,6 @@ import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
-import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerExit;
@@ -113,9 +112,6 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
     private List<String> dirToMount = new ArrayList<String>();
     private RemoteDockerHostBackend db = getBackendConfig();
 
-    public static void main(String[] args) throws DockerCertificateException, DockerException, InterruptedException {
-
-    }
     private ProcessOfferingDocument.ProcessOffering description;
     private String instanceId;
     private boolean mountEOStore;
@@ -189,8 +185,8 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         String imageName = dockerImageReference;
         log.debug("pulling image:" + imageName);
         docker.pull(imageName);
-     //   ImageInfo infoTest = docker.inspectImage("test");
-       
+        //   ImageInfo infoTest = docker.inspectImage("test");
+
         writeEnvPropertyFile(env);
         log.debug("Env variables passed to the containers");
         ContainerConfig.Builder build = ContainerConfig.builder().image(
@@ -239,18 +235,16 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
 
         ContainerInfo info = docker.inspectContainer(id);
         log.debug("Current status: " + info.state().status());
-        
-        
+
         //DockerUtil.logAndWait(docker, id);
         final ContainerExit exit = docker.waitContainer(id);
-         LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout());
+        LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout());
         LogStream streamErr = docker.logs(id, DockerClient.LogsParam.stderr());
- 
+
         log.debug(stream.readFully());
         log.debug(streamErr.readFully());
 
         //ContainerConfig.builder().image(imageName).cmd("sh", "-c", "while
-
         /**
          * ServiceCreateResponse serviceResponse = docker.createService(null);
          * Service service = docker.inspectService(serviceResponse.id());
@@ -510,19 +504,44 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         return docker;
     }
 
+    public static void main(String[] args) {
+        try {
+            MetadataType appContextMetadata = MetadataType.Factory.parse(
+                    new File("D:/app.txt"));
+            log.debug("Parsing appContext " + appContextMetadata.toString());
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            NamespaceContext context = DockerUtil.getTB13NamespaceContext();
+            log.debug("Context:" + context.getNamespaceURI("eoc"));
+            xPath.setNamespaceContext(context);
+            Node node = (Node) xPath.evaluate(
+                    "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/DockerImage']/ows:AdditionalParameters/ows:AdditionalParameter/ows:Name[text()='eoc.reference']/../ows:Value/text()",
+                    appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
+            if (node == null) {
+                log.warn("null node");
+                return;
+            }
+            log.debug("Node content is :" + node.toString());
+            log.debug("Node content is :" + node.getNodeValue());
+            log.debug("Node content is :" + node.getTextContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private String parseDockerImage() throws XPathExpressionException, XmlException {
         MetadataType appContextMetadata = DockerUtil.getMetadataContentByKey(
-                "http://www.opengis.net/wps/2.0/profile/tb13/eoc",
+                "http://www.opengis.net//tb13/eoc/applicationContext",
                 description);
         log.debug("Parsing appContext " + appContextMetadata.toString());
         XPath xPath = XPathFactory.newInstance().newXPath();
         NamespaceContext context = DockerUtil.getTB13NamespaceContext();
         log.debug("Context:" + context.getNamespaceURI("eoc"));
         xPath.setNamespaceContext(context);
-        Node node = (Node) xPath.evaluate("//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/DockerImage']/ows:AdditionalParameters/ows:AdditionalParameter/ows:Name[text()='eoc:reference']/../ows:Value",
-                appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
-        log.debug("Node content is :"+node.getTextContent());
-return node.getTextContent();
+       Node node = (Node) xPath.evaluate(
+                    "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/DockerImage']/ows:AdditionalParameters/ows:AdditionalParameter/ows:Name[text()='eoc.reference']/../ows:Value/text()",
+                    appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
+        log.debug("Node content is :" + node.getNodeValue());
+        return node.getNodeValue();
     }
 
     /**
