@@ -50,7 +50,6 @@ import net.opengis.wps.x20.ProcessOfferingDocument;
 import net.opengis.wps.x20.profile.tb13.eoc.ApplicationContextDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
@@ -84,7 +83,7 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
     @Override
     public List<String> getOutputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("DeployApplicationResponse");
+        identifierList.add("DeployProcessResponse");
         return identifierList;
     }
 
@@ -118,15 +117,18 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
 
             XmlObject packageXml = XmlObject.Factory.parse(new File(
                     "D:/package.xml"));
-            /**
-             * NamespaceContext nc = new PackageNamespaceContext(); XPath xPath
-             * = XPathFactory.newInstance().newXPath();
-             * xPath.setNamespaceContext(nc); Node node = (Node) xPath.evaluate(
-             * "//owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
-             * packageXml.copy().getDomNode(), XPathConstants.NODE);
-             * System.out.println(node.getNodeValue());
-             */
+            
+            
+             
             ProcessOfferingDocument processOffering = convertOWCtoWPS(packageXml);
+             NamespaceContext nc = new PackageNamespaceContext(); XPath xPath
+              = XPathFactory.newInstance().newXPath();
+              xPath.setNamespaceContext(nc); Node node = (Node) xPath.evaluate(
+              "//owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
+              processOffering.copy().getDomNode(), XPathConstants.NODE);
+              System.out.println("Test:"+node.getNodeValue());
+             
+            
             System.out.println(processOffering.toString());
 
         } catch (XPathExpressionException ex) {
@@ -144,20 +146,31 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         try {
+            /**
             ProcessOfferingDocument.ProcessOffering desc = (ProcessOfferingDocument.ProcessOffering) this.getDescription().getProcessDescriptionType(
                     WPSConfig.VERSION_200);
+                    * */
             log.debug("Run for IncrementConversion");
             // Get application pacakge input
             XmlObject packageXml = ((GenericXMLDataBinding) inputData.get(
                     "ApplicationPackage").get(0)).getPayload(); // Creating a XPath
-            ProcessOfferingDocument processOffering = convertOWCtoWPS(packageXml);
+            ProcessOfferingDocument processOffering = null;
+            // Allow 2 formats
+            try {
+                processOffering = ProcessOfferingDocument.Factory.parse(packageXml.copy().getDomNode());
+            }
+            catch(Exception e) {
+                // Case of OWC context
+                 processOffering =  convertOWCtoWPS(packageXml);
+            }
+            
             HashMap<String, IData> results = new HashMap<String, IData>();
 
             DeployProcessDocument deploy = DeployProcessDocument.Factory.newInstance();
             DeployProcessDocument.DeployProcess dp = deploy.addNewDeployProcess();
             dp.setService("WPS");
             dp.setVersion("2.0.0");
-            dp.setProcessOffering(desc);
+            dp.setProcessOffering(processOffering.getProcessOffering());
             DeploymentProfileType prof = dp.addNewDeploymentProfile();
             prof.setDeploymentProfileName(
                     "http://spacebel.be/profile/docker.xsd");
@@ -165,10 +178,13 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
             NamespaceContext nc = new PackageNamespaceContext();
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(nc);
+            //log.debug("evaluate in "+processOffering.toString());
             Node node = (Node) xPath.evaluate(
                     "//owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
-                    desc.copy().getDomNode(), XPathConstants.NODE);
+                    processOffering.copy().getDomNode(), XPathConstants.NODE);
+            log.debug("NodeisNull?"+(node==null));
             ExecutionUnitType unit = prof.addNewExecutionUnit();
+            log.debug(node.getNodeValue());
             unit.addNewReference().setHref(node.getNodeValue());
 
             DeployResultDocument response = DeployResultDocument.Factory.newInstance();
