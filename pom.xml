@@ -182,11 +182,11 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <header>misc/licenses/license_header.txt</header>
-                 <!--
-                    <headerDefinitions>
-                        <headerDefinition>misc/licenses/javadoc-def.xml</headerDefinition>
-                    </headerDefinitions>
-                 -->
+                    <!--
+                       <headerDefinitions>
+                           <headerDefinition>misc/licenses/javadoc-def.xml</headerDefinition>
+                       </headerDefinitions>
+                    -->
                     <aggregate>true</aggregate>
                     <properties>
                         <inceptionYear>${project.inceptionYear}</inceptionYear>
@@ -249,6 +249,7 @@
         <module>52n-wps-algorithm</module>
         <module>52n-wps-algorithm-impl</module>
         <module>52n-wps-algorithm-geotools</module>
+        <module>52n-wps-algorithm-deploy</module>
         <module>52n-wps-database</module>
         <module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
@@ -256,8 +257,8 @@
         <module>52n-wps-sextante</module>
         <module>52n-wps-grass</module>
         <module>52n-wps-r</module>
-		<module>52n-wps-eoc</module>
-        
+        <module>52n-wps-eoc</module>
+     
     </modules>
     <properties>
         <java-version>1.8</java-version>
@@ -852,7 +853,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-eoc</artifactId>
+                <artifactId>52n-wps-eoc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             
@@ -866,6 +867,12 @@
                 <artifactId>52n-wps-algorithm-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>52n-wps-algorithm-deploy</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-database</artifactId>
@@ -1101,7 +1108,7 @@
                 </plugins>
             </build>
         </profile>
-  <profile>
+        <profile>
             <id>deploy-to-spacebel</id>
             <distributionManagement>
                 <repository>

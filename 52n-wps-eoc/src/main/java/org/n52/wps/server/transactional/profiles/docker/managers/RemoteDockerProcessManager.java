@@ -1,4 +1,4 @@
-/**
+g/**
  * Copyright (C) 2007-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -538,7 +538,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         log.debug("Context:" + context.getNamespaceURI("eoc"));
         xPath.setNamespaceContext(context);
        Node node = (Node) xPath.evaluate(
-                    "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/DockerImage']/ows:AdditionalParameters/ows:AdditionalParameter/ows:Name[text()='eoc.reference']/../ows:Value/text()",
+                    "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
                     appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
         log.debug("Node content is :" + node.getNodeValue());
         return node.getNodeValue();

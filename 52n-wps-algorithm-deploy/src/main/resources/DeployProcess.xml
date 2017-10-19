@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessOfferings xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
+    <wps:ProcessOffering jobControlOptions="async-execute dismiss" outputTransmission="value reference">
+        <wps:Process>
+            <ows:Title>Deploy Process</ows:Title>
+            <ows:Abstract>This method will deploy an application encapsulated within a Docker container as a process accessible through the WPS interface.</ows:Abstract>
+            <ows:Identifier>DeployProcess</ows:Identifier>
+            <wps:Input>
+                <ows:Title>Application Package</ows:Title>
+                <ows:Abstract>A TB13 EOC application package, encoded as an ATOM-encoded OGC context document, describing the details of the application.</ows:Abstract>
+                <ows:Identifier>ApplicationPackage</ows:Identifier>
+                <wps:ComplexData>
+                    <wps:Format mimeType="text/xml" encoding="UTF-8"
+                                default="true"/>
+                </wps:ComplexData>
+            </wps:Input>
+            <wps:Output>
+                <ows:Title>Deploy Process Response</ows:Title>
+                <ows:Abstract>The response to registering an application will either be an ows:ExceptionReport if the registration failed OR a wps:DeployApplicationResponse element if all went well!</ows:Abstract>
+                <ows:Identifier>DeployProcessResponse</ows:Identifier>
+                <wps:ComplexData>
+                    <wps:Format mimeType="text/xml" encoding="UTF-8" default="true"
+                                schema="hhttps://raw.githubusercontent.com/spacebel/common-xml/master/52n-ogc-schema/src/main/resources/META-INF/xml/wps/t/wpsDeployProcess.xsd"/>
+                </wps:ComplexData>
+            </wps:Output>
+        </wps:Process>	
+    </wps:ProcessOffering>
+</wps:ProcessOfferings>
