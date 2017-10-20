@@ -1,5 +1,10 @@
 # 52°North Web Processing Service [![Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)
 
+This project is a fort of the 52°North Web Processing Service and intends to provide an implementation of the transactional extension .
+WPS2.0 Transactional Extension Implementation Standard [OGC 13-071r1](https://wiki.services.eoportal.org/tiki-download_file.php?fileId=551&display) lightly modified to adapt to version 2.0 of WPS.
+
+Please consult Wiki pages for detailed information about the project: [WPS Transactional Wiki](https://github.com/spacebel/WPS/wiki)
+
 The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in
 a standardized way. It features a pluggable architecture for processes and data encodings.
 The implementation is based on the current OpenGIS specification: 05-007r7.
