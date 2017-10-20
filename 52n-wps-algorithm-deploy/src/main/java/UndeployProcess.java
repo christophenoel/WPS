@@ -27,8 +27,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,20 +39,18 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import net.opengis.ows.x20.MetadataType;
-import net.opengis.wps.x20.DeployProcessDocument;
-import net.opengis.wps.x20.DeployResultDocument;
-import net.opengis.wps.x20.DeployResultType;
-import net.opengis.wps.x20.DeploymentProfileType;
-import net.opengis.wps.x20.ExecutionUnitType;
 import net.opengis.wps.x20.ProcessOfferingDocument;
+import net.opengis.wps.x20.UndeployProcessDocument;
+import net.opengis.wps.x20.UndeployResultDocument;
+import net.opengis.wps.x20.UndeployResultType;
 import net.opengis.wps.x20.profile.tb13.eoc.ApplicationContextDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.transactional.request.DeployProcessRequest;
+import org.n52.wps.server.transactional.request.UndeployProcessRequest;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -68,22 +64,22 @@ import org.w3c.dom.Node;
  *
  * @author cnl
  */
-public class DeployProcess extends AbstractSelfDescribingAlgorithm {
+public class UndeployProcess extends AbstractSelfDescribingAlgorithm {
 
     private static org.slf4j.Logger log = LoggerFactory
-            .getLogger(DeployProcess.class);
+            .getLogger(UndeployProcess.class);
 
     @Override
     public List<String> getInputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("ApplicationPackage");
+        identifierList.add("ProcessIdentifier");
         return identifierList;
     }
 
     @Override
     public List<String> getOutputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("DeployProcessResponse");
+        identifierList.add("UndeployProcessResponse");
         return identifierList;
     }
 
@@ -112,94 +108,42 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
         return processOffering;
     }
 
-    public static void main(String[] args) {
-        try {
-
-            XmlObject packageXml = XmlObject.Factory.parse(new File(
-                    "D:/package.xml"));
-            
-            
-             
-            ProcessOfferingDocument processOffering = convertOWCtoWPS(packageXml);
-             NamespaceContext nc = new PackageNamespaceContext(); XPath xPath
-              = XPathFactory.newInstance().newXPath();
-              xPath.setNamespaceContext(nc); Node node = (Node) xPath.evaluate(
-              "//owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
-              processOffering.copy().getDomNode(), XPathConstants.NODE);
-              System.out.println("Test:"+node.getNodeValue());
-             
-            
-            System.out.println(processOffering.toString());
-
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        } catch (XmlException ex) {
-            Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        }
-    }
-
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
-        try {
+      
             /**
-            ProcessOfferingDocument.ProcessOffering desc = (ProcessOfferingDocument.ProcessOffering) this.getDescription().getProcessDescriptionType(
-                    WPSConfig.VERSION_200);
-                    * */
+             * ProcessOfferingDocument.ProcessOffering desc =
+             * (ProcessOfferingDocument.ProcessOffering)
+             * this.getDescription().getProcessDescriptionType(
+             * WPSConfig.VERSION_200);
+             *
+             */
             log.debug("Run for IncrementConversion");
             // Get application pacakge input
-            XmlObject packageXml = ((GenericXMLDataBinding) inputData.get(
-                    "ApplicationPackage").get(0)).getPayload(); // Creating a XPath
-            ProcessOfferingDocument processOffering = null;
-            // Allow 2 formats
-            try {
-                processOffering = ProcessOfferingDocument.Factory.parse(packageXml.copy().getDomNode());
-            }
-            catch(Exception e) {
-                // Case of OWC context
-                 processOffering =  convertOWCtoWPS(packageXml);
-            }
-            
+            String identifier = ((LiteralStringBinding) inputData.get(
+                    "ProcessIdentifier").get(0)).getPayload(); // Creating a XPath
+
             HashMap<String, IData> results = new HashMap<String, IData>();
 
-            DeployProcessDocument deploy = DeployProcessDocument.Factory.newInstance();
-            DeployProcessDocument.DeployProcess dp = deploy.addNewDeployProcess();
-            dp.setService("WPS");
-            dp.setVersion("2.0.0");
-            dp.setProcessOffering(processOffering.getProcessOffering());
-            DeploymentProfileType prof = dp.addNewDeploymentProfile();
-            prof.setDeploymentProfileName(
-                    "http://spacebel.be/profile/docker.xsd");
-            // Retrieve the docker reference
-            NamespaceContext nc = new PackageNamespaceContext();
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            xPath.setNamespaceContext(nc);
-            //log.debug("evaluate in "+processOffering.toString());
-            Node node = (Node) xPath.evaluate(
-                    "//owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
-                    processOffering.copy().getDomNode(), XPathConstants.NODE);
-            log.debug("NodeisNull?"+(node==null));
-            ExecutionUnitType unit = prof.addNewExecutionUnit();
-            log.debug(node.getNodeValue());
-            unit.addNewReference().setHref(node.getNodeValue());
+            UndeployProcessDocument undeploy = UndeployProcessDocument.Factory.newInstance();
+            UndeployProcessDocument.UndeployProcess undp = undeploy.addNewUndeployProcess();
+            undp.setService("WPS");
+            undp.setVersion("2.0.0");
+            undp.addNewIdentifier().setStringValue(identifier);
 
-            DeployResultDocument response = DeployResultDocument.Factory.newInstance();
-            response.addNewDeployResult();
-            response.getDeployResult().setDeploymentDone(true);
+            UndeployResultDocument response = UndeployResultDocument.Factory.newInstance();
+            response.addNewUndeployResult();
+            response.getUndeployResult().setUndeploymentDone(true);
             try {
-                DeployProcessRequest deployRequest = new DeployProcessRequest(
-                        (Document) deploy.getDomNode());
-                deployRequest.call();
-            } catch (ExceptionReport ex) {
+                UndeployProcessRequest undeployRequest = new UndeployProcessRequest(
+                        (Document) undeploy.getDomNode());
+                undeployRequest.call();
+            } catch (Exception ex) {
                 Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
                         null, ex);
-                response = DeployResultDocument.Factory.newInstance();
-                DeployResultType result = response.addNewDeployResult();
-                result.setDeploymentDone(false);
+                response = UndeployResultDocument.Factory.newInstance();
+                UndeployResultType result = response.addNewUndeployResult();
+                result.setUndeploymentDone(false);
                 result.setFailureReason(ex.getMessage());
             }
             // Create DeployResult document
@@ -209,21 +153,12 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
             results.put("DeployProcessResponse", binding);
 
             return results;
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        } catch (XmlException ex) {
-            Logger.getLogger(DeployProcess.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        }
-
-        return null;
     }
 
     @Override
     public Class<?> getInputDataType(String id) {
 
-        return GenericXMLDataBinding.class;
+        return LiteralStringBinding.class;
     }
 
     @Override

@@ -20,7 +20,7 @@
                 <ows:Identifier>DeployProcessResponse</ows:Identifier>
                 <wps:ComplexData>
                     <wps:Format mimeType="text/xml" encoding="UTF-8" default="true"
-                                schema="hhttps://raw.githubusercontent.com/spacebel/common-xml/master/52n-ogc-schema/src/main/resources/META-INF/xml/wps/t/wpsDeployProcess.xsd"/>
+                                schema="https://raw.githubusercontent.com/spacebel/common-xml/master/52n-ogc-schema/src/main/resources/META-INF/xml/wps/t/wpsDeployProcess.xsd"/>
                 </wps:ComplexData>
             </wps:Output>
         </wps:Process>	

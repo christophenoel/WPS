@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessOfferings xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd">
+	<wps:ProcessOffering jobControlOptions="async-execute dismiss" outputTransmission="value reference">
+		<wps:Process>
+			<ows:Title>Undeploy Process</ows:Title>
+			<ows:Abstract>This method will undeploy an application encapsulated within a Docker container that was deployed through the WPS interface.</ows:Abstract>
+			<ows:Identifier>UndeployProcess</ows:Identifier>
+			<wps:Input>
+				<ows:Title>Process Identifier</ows:Title>
+				<ows:Abstract>The identifier of the process to be undeployed e.g. LandCover</ows:Abstract>
+				<ows:Identifier>ProcessIdentifier</ows:Identifier>
+				<wps:LiteralData>
+					<wps:Format mimeType="text/plain" default="true"/>
+					<LiteralDataDomain default="true">
+						<ows:AnyValue/>
+						<ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
+					</LiteralDataDomain>
+				</wps:LiteralData>
+			</wps:Input>
+			<wps:Output>
+				<ows:Title>Undeploy Process Response</ows:Title>
+				<ows:Abstract>The response to deregistering an application.</ows:Abstract>
+				<ows:Identifier>UndeployProcessResponse</ows:Identifier>
+				<wps:ComplexData>
+					<wps:Format mimeType="text/xml" encoding="UTF-8" default="true" schema="https://raw.githubusercontent.com/spacebel/common-xml/master/52n-ogc-schema/src/main/resources/META-INF/xml/wps/t/wpsUndeployProcess.xsd"/>
+				</wps:ComplexData>
+			</wps:Output>
+		</wps:Process>
+	</wps:ProcessOffering>
+</wps:ProcessOfferings>
+

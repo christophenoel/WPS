@@ -880,5 +880,5 @@ INSERT INTO CONFIGURATIONENTRY VALUES('outputDir','org.n52.wps.webapp.entities.R
 INSERT INTO CONFIGURATIONENTRY VALUES('envDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','envDir');
 
 INSERT INTO ALGORITHMENTRY VALUES('DeployProcess','org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM',TRUE);
-
+INSERT INTO ALGORITHMENTRY VALUES('UndeployProcess','org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM',TRUE);
 
