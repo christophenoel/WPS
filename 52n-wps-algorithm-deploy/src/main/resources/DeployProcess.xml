@@ -16,7 +16,7 @@
             </wps:Input>
             <wps:Output>
                 <ows:Title>Deploy Process Response</ows:Title>
-                <ows:Abstract>The response to registering an application will either be an ows:ExceptionReport if the registration failed OR a wps:DeployApplicationResponse element if all went well!</ows:Abstract>
+                <ows:Abstract>The response to registering an application</ows:Abstract>
                 <ows:Identifier>DeployProcessResponse</ows:Identifier>
                 <wps:ComplexData>
                     <wps:Format mimeType="text/xml" encoding="UTF-8" default="true"

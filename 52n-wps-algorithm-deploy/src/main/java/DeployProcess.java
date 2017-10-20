@@ -116,7 +116,7 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
         try {
 
             XmlObject packageXml = XmlObject.Factory.parse(new File(
-                    "D:/package.xml"));
+                    "http://raw.githubusercontent.com/spacebel/WPS/wps2.0-transactional/52n-wps-eoc/src/main/resources/examples/landcover-applicationPackage-owc.xml"));
             
             
              
