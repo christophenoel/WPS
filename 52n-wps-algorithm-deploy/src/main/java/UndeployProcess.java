@@ -72,14 +72,14 @@ public class UndeployProcess extends AbstractSelfDescribingAlgorithm {
     @Override
     public List<String> getInputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("ProcessIdentifier");
+        identifierList.add("processIdentifier");
         return identifierList;
     }
 
     @Override
     public List<String> getOutputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("UndeployProcessResponse");
+        identifierList.add("undeployResult");
         return identifierList;
     }
 
@@ -121,7 +121,7 @@ public class UndeployProcess extends AbstractSelfDescribingAlgorithm {
             log.debug("Run for IncrementConversion");
             // Get application pacakge input
             String identifier = ((LiteralStringBinding) inputData.get(
-                    "ProcessIdentifier").get(0)).getPayload(); // Creating a XPath
+                    "processIdentifier").get(0)).getPayload(); // Creating a XPath
 
             HashMap<String, IData> results = new HashMap<String, IData>();
 
@@ -150,7 +150,7 @@ public class UndeployProcess extends AbstractSelfDescribingAlgorithm {
 
             GenericXMLDataBinding binding = new GenericXMLDataBinding(
                     response);
-            results.put("DeployProcessResponse", binding);
+            results.put("undeployResult", binding);
 
             return results;
     }

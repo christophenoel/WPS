@@ -76,14 +76,14 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
     @Override
     public List<String> getInputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("ApplicationPackage");
+        identifierList.add("applicationPackage");
         return identifierList;
     }
 
     @Override
     public List<String> getOutputIdentifiers() {
         List<String> identifierList = new ArrayList<String>();
-        identifierList.add("DeployProcessResponse");
+        identifierList.add("deployResult");
         return identifierList;
     }
 
@@ -153,7 +153,7 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
             log.debug("Run for IncrementConversion");
             // Get application pacakge input
             XmlObject packageXml = ((GenericXMLDataBinding) inputData.get(
-                    "ApplicationPackage").get(0)).getPayload(); // Creating a XPath
+                    "applicationPackage").get(0)).getPayload(); // Creating a XPath
             ProcessOfferingDocument processOffering = null;
             // Allow 2 formats
             try {
@@ -206,7 +206,7 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
 
             GenericXMLDataBinding binding = new GenericXMLDataBinding(
                     response);
-            results.put("DeployProcessResponse", binding);
+            results.put("deployResult", binding);
 
             return results;
         } catch (XPathExpressionException ex) {

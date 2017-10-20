@@ -8,7 +8,7 @@
 			<wps:Input>
 				<ows:Title>Process Identifier</ows:Title>
 				<ows:Abstract>The identifier of the process to be undeployed e.g. LandCover</ows:Abstract>
-				<ows:Identifier>ProcessIdentifier</ows:Identifier>
+				<ows:Identifier>processIdentifier</ows:Identifier>
 				<wps:LiteralData>
 					<wps:Format mimeType="text/plain" default="true"/>
 					<LiteralDataDomain default="true">
@@ -20,7 +20,7 @@
 			<wps:Output>
 				<ows:Title>Undeploy Process Response</ows:Title>
 				<ows:Abstract>The response to deregistering an application.</ows:Abstract>
-				<ows:Identifier>UndeployProcessResponse</ows:Identifier>
+				<ows:Identifier>undeployResult</ows:Identifier>
 				<wps:ComplexData>
 					<wps:Format mimeType="text/xml" encoding="UTF-8" default="true" schema="https://raw.githubusercontent.com/spacebel/common-xml/master/52n-ogc-schema/src/main/resources/META-INF/xml/wps/t/wpsUndeployProcess.xsd"/>
 				</wps:ComplexData>

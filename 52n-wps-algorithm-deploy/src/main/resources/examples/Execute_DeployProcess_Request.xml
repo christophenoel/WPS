@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wps:Execute xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" service="WPS" version="2.0.0" response="document" mode="sync" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<ows:Identifier>DeployProcess</ows:Identifier>
-	<wps:Input id="ApplicationPackage">
+	<wps:Input id="applicationPackage">
 		<wps:Data>
 			<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:owc="http://www.opengis.net/owc/1.0" xmlns:os="http://a9.com/-/spec/opensearch/1.1/" xml:lang="en">
 				<link rel="profile" href="http://www.opengis.net/spec/owc-atom/1.0/req/core" title="This file is compliant with version 1.0 of OGC Context"/>
@@ -117,5 +117,5 @@
 			</feed>
 		</wps:Data>
 	</wps:Input>
-	<wps:Output id="DeployProcessResponse" transmission="value"/>
+	<wps:Output id="deployResult" transmission="value"/>
 </wps:Execute>
