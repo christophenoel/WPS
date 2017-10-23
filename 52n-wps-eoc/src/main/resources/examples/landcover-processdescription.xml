@@ -62,7 +62,7 @@
                 <LiteralDataDomain default="true">
                     <ows:AnyValue/>
                     <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
-                    <ows:DefaultValue>POLYGON((-92.906633 16.190411,-92.066559 16.188383,-92.070266 15.376645,-92.907004 15.378567,-92.906633 16.190411))</ows:DefaultValue>ows:DefaultValue>
+                    <ows:DefaultValue>POLYGON((-92.906633 16.190411,-92.066559 16.188383,-92.070266 15.376645,-92.907004 15.378567,-92.906633 16.190411))</ows:DefaultValue>
                 </LiteralDataDomain>
             </wps:LiteralData>
         </wps:Input>
@@ -73,9 +73,9 @@
             <wps:LiteralData>
                 <wps:Format mimeType="text/plain" default="true"/>
                 <LiteralDataDomain>
-                    <ows:ValuesReference ows:reference="http://...."/>
+                    <ows:AnyValue/>
                     <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
-                    <ows:DefaultValue>EPSG:4326</ows:DefaultValue>
+                    <ows:DefaultValue>EPSG:32615</ows:DefaultValue>
                 </LiteralDataDomain>
             </wps:LiteralData>
         </wps:Input>
@@ -98,7 +98,6 @@
             <ows:Identifier>Image_Result</ows:Identifier>
             <wps:ComplexData>
                 <wps:Format mimeType="image/tiff" default="true"/>
-					
             </wps:ComplexData>
         </wps:Output>
     </wps:Process>
