@@ -93,7 +93,7 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
         xPath.setNamespaceContext(nc);
         // Retrieving process description
         Node processOfferingNode = (Node) xPath.evaluate(
-                "//atom:entry/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/wpsProcessOffering']/owc:content/wps:ProcessOfferings/wps:ProcessOffering",
+                "//atom:entry/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/wpsProcessOffering']/owc:content/wps:ProcessOffering",
                 packageXml.copy().getDomNode(), XPathConstants.NODE);
         ProcessOfferingDocument processOffering = ProcessOfferingDocument.Factory.parse(
                 processOfferingNode);
