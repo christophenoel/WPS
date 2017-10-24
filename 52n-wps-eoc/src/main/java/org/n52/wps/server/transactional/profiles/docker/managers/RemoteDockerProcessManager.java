@@ -50,6 +50,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -79,8 +81,11 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import net.schmizz.sshj.xfer.LocalDestFile;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
@@ -154,6 +159,9 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
     private Map<String, IData> invoke(ExecuteDocument execute,
             String processId,
             ProcessOfferingDocument.ProcessOffering description, UUID instanceId) throws Exception {
+        env = new ArrayList<String>();
+        dirToMount = new ArrayList<String>();
+        outputs = new HashMap<>();
         log.debug("Starting invoke in RemoteDocker manager");
         this.instanceId = instanceId.toString();
         this.description = description;
@@ -337,6 +345,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
     private void handleInputs(ExecuteDocument execute,
             ProcessOfferingDocument.ProcessOffering description) throws ExceptionReport, IOException {
         HashMap<String, byte[]> files = new HashMap<String, byte[]>();
+        HashMap<String, byte[]> zipfiles = new HashMap<String, byte[]>();
         for (DataInputType input : execute.getExecute().getInputArray()) {
             String id = input.getId();
             log.debug("handling input:" + id);
@@ -353,25 +362,63 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                     if (ref.startsWith(db.getEODataConversionPrefix())) {
                         log.debug(
                                 "Reference starts with the configured prefix " + db.getEODataConversionPrefix());
+                        //Hack for Spacebel
+                        log.debug("hack for spacebel?");
+                        if(ref.startsWith("file:///nas-data")) {
+                            log.debug("adding SAFE directory");
+                            String productid = StringUtils.substringAfterLast(ref, "/");
+                            ref= ref.concat("/").concat(productid).concat(".SAFE");
+                        }
                         String convertedRef = ref.replaceFirst(
                                 db.getEODataConversionPrefix(),
                                 db.getNfsEODataPath());
+                        
                         log.debug("Converted reference to " + convertedRef);
                         // indicate the EO store must be mounted to container for execution
                         dirToMount.add(convertedRef);
                         // add location to the environmnent variables list
                         env.add("WPS_INPUT_" + id.toUpperCase() + "=" + convertedRef);
+                    } else {
+                        log.debug("input not local reference");
+                        //simple reference file
+                        String extension = "";
+                        String pe = StringUtils.substringAfterLast(ref, ".");
+                        if (pe != null && pe.length() < 5 && ref.endsWith(
+                                pe)) {
+                            extension = pe;
+                        }
+                        log.debug("extension is " + extension);
+                        URL refURL = new URL(ref);
+                        byte[] binary = IOUtils.toByteArray(refURL.openStream());
+                        log.debug(
+                                "Found mimeType " + input.getData().getMimeType());
+                        if (extension.equalsIgnoreCase("zip") || input.getData().getMimeType().equalsIgnoreCase(
+                                "application/zip") || input.getData().getMimeType().contains(
+                                        "zip")) {
+                            log.debug("added to zipfiles");
+                            zipfiles.put(id, binary);
+                        } else {
+                            log.debug("added to files");
+                            files.put(id, binary);
+                        }
                     }
-                    db.getNfsEODataPath();
                 } else if (input.isSetData()) {
                     log.debug("input by data");
-                    // TODO parse this
+                    // TODO parse this non base64 if encoding normal
                     byte[] binary = Base64.getDecoder().decode(
                             input.getData().getDomNode().getFirstChild().getNodeValue());
                     String testString = new String(binary);
-                    log.debug("decoded:" + testString);
+                    //log.debug("decoded:" + testString);
                     log.debug("putting file " + id);
-                    files.put(id, binary);
+                    if (input.getData().getMimeType().equalsIgnoreCase(
+                            "application/zip") || input.getData().getMimeType().contains(
+                                    "zip")) {
+                        log.debug("added to zipfiles");
+                        zipfiles.put(id, binary);
+                    } else {
+                        log.debug("added to files");
+                        files.put(id, binary);
+                    }
                 } else {
                     if (inputDesc.getMinOccurs().intValue() >= 1) {
                         throw new ExceptionReport(
@@ -391,7 +438,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         }
         // write the input files to NFS
         log.debug("write input files to NFS store");
-        writeFilesToNFS(ssh, files,
+        writeFilesToNFS(ssh, files, zipfiles,
                 getInputDirectory(this.getProcessID(), instanceId.toString())
         );
     }
@@ -445,9 +492,46 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
      * @throws IOException
      */
     private void writeFilesToNFS(SSHClient ssh, HashMap<String, byte[]> files,
+            HashMap<String, byte[]> zipfiles,
             Path path) throws IOException {
+        for (String i : zipfiles.keySet()) {
+            log.debug("handling file store of ZIP " + i);
+            byte[] fileBytes = zipfiles.get(i);
+            InputDescriptionType inputDesc = DockerUtil.getInputDesc(i,
+                    description);
+            // TODO implement if image location is overriden in description
+            // create TMP file
+            File temp = File.createTempFile("wps_inp", ".tmp");
+            // write bytes in temp file
+            FileUtils.writeByteArrayToFile(temp, fileBytes);
+            Path tempDir = Files.createTempDirectory("wps_zip");
+            //tempDirFile = new File(tempDir)
+            DockerUtil.unZipIt(temp.getAbsolutePath(), tempDir.toString());
+            // write bytes in temp file
+            String targetDirLocation = FilenameUtils.separatorsToUnix(Paths.get(
+                    getInputDirectory(processID,
+                            instanceId).toString()).toString());
+            String targetFileLocation = FilenameUtils.separatorsToUnix(
+                    Paths.get(getInputDirectory(processID,
+                            instanceId).toString(), i).toString());
+            SFTPClient ftpClient = ssh.newSFTPClient();
+            ftpClient.mkdirs(targetFileLocation);
+            
+            for (File f : FileUtils.listFiles(new File(tempDir.toString()), TrueFileFilter.INSTANCE,
+                    TrueFileFilter.INSTANCE)) {
+                log.debug("writing " + f.getAbsolutePath());
+                ftpClient.put(f.getAbsolutePath(),
+                        targetFileLocation);
+
+            }
+            //temp.delete();
+            //FileUtils.deleteDirectory(new File(tempDir.toString()));
+            // add input location to env variables
+            log.debug("adding " + i + " =" + targetFileLocation);
+            env.add("WPS_INPUT_" + i.toUpperCase() + "=" + targetFileLocation);
+        }
         for (String i : files.keySet()) {
-            log.debug("handling file store of " + i);
+            log.debug("handling file store of non-zip" + i);
             byte[] fileBytes = files.get(i);
             InputDescriptionType inputDesc = DockerUtil.getInputDesc(i,
                     description);
@@ -475,6 +559,17 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         // ssh.disconnect();
     }
 
+    /**
+     *  // String inPath = FilenameUtils.separatorsToUnix( Paths.get(
+     * getInputDirectory(processID, instanceId).toString(), id).toString()) +
+     * extension; if (extension.equalsIgnoreCase("zip")) { inPath =
+     * FilenameUtils.separatorsToUnix( Paths.get( getInputDirectory(processID,
+     * instanceId).toString(), id).toString());
+     *
+     * }
+     * File dir = new File(inPath); dir.mkdirs(); FileUtils.copyURLToFile(new
+     * URL(ref), inPath);
+     */
     /**
      * Return the Working Directory Path on NFS
      *
@@ -537,9 +632,9 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         NamespaceContext context = DockerUtil.getTB13NamespaceContext();
         log.debug("Context:" + context.getNamespaceURI("eoc"));
         xPath.setNamespaceContext(context);
-       Node node = (Node) xPath.evaluate(
-                    "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
-                    appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
+        Node node = (Node) xPath.evaluate(
+                "//eoc:ApplicationContext/descendant::owc:offering[@code='http://www.opengis.net/tb13/eoc/docker']/owc:content/text()",
+                appContextMetadata.copy().getDomNode(), XPathConstants.NODE);
         log.debug("Node content is :" + node.getNodeValue());
         return node.getNodeValue();
     }

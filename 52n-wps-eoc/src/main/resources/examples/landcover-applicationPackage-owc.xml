@@ -27,8 +27,7 @@
         </owc:offering>
         <owc:offering code="http://www.opengis.net/tb13/eoc/wpsProcessOffering">
             <owc:content type="application/xml">
-                <wps:ProcessOfferings xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <wps:ProcessOffering  jobControlOptions="async-execute dismiss" outputTransmission="value reference">
+                    <wps:ProcessOffering  jobControlOptions="async-execute dismiss" outputTransmission="value reference" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <wps:Process>
                             <ows:Title>Land Cover Mapping</ows:Title>
                             <ows:Abstract>Lang Cover Mapping is based on the Sentinel-2 processing workflow generated for the F-TEP platform.</ows:Abstract>
@@ -58,7 +57,7 @@
                                     <LiteralDataDomain default="true">
                                         <ows:AnyValue/>
                                         <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
-                                        <ows:DefaultValue>POLYGON((-92.906633 16.190411,-92.066559 16.188383,-92.070266 15.376645,-92.907004 15.378567,-92.906633 16.190411))</ows:DefaultValue>
+                                        <ows:DefaultValue>POLYGON((-92.9 16.2, -92.1 16.2, -92.1 15.4, -92.9 15.4, -92.9 16.2))</ows:DefaultValue>
                                     </LiteralDataDomain>
                                 </wps:LiteralData>
                             </wps:Input>
@@ -98,7 +97,6 @@
                             </wps:Output>
                         </wps:Process>
                     </wps:ProcessOffering>
-                </wps:ProcessOfferings>
             </owc:content>
         </owc:offering>
     </entry>

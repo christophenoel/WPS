@@ -38,9 +38,14 @@ import com.spotify.docker.client.LogMessage;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerInfo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.PublicKey;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.xml.namespace.NamespaceContext;
 import net.opengis.ows.x20.MetadataType;
 import net.opengis.wps.x20.InputDescriptionType;
@@ -145,14 +150,20 @@ public class DockerUtil {
         return nc;
     }
 
-    /** DO NOT WORK  - continuous logging*/
+    /**
+     * DO NOT WORK - continuous logging
+     */
     static void logAndWait(DockerClient docker, String id) throws DockerException, InterruptedException {
-        
-        LogStream stream = docker.attachContainer(id, DockerClient.AttachParameter.STDOUT,DockerClient.AttachParameter.STREAM);
-        LogStream streamErr = docker.attachContainer(id, DockerClient.AttachParameter.STDERR,DockerClient.AttachParameter.STREAM);
+
+        LogStream stream = docker.attachContainer(id,
+                DockerClient.AttachParameter.STDOUT,
+                DockerClient.AttachParameter.STREAM);
+        LogStream streamErr = docker.attachContainer(id,
+                DockerClient.AttachParameter.STDERR,
+                DockerClient.AttachParameter.STREAM);
         ContainerInfo info = docker.inspectContainer(id);
         while (info.state().running()) {
-               
+
             while (stream.hasNext()) {
                 LogMessage logMessage = stream.next();
                 ByteBuffer buffer = logMessage.content();
@@ -168,6 +179,54 @@ public class DockerUtil {
                 log.debug(new String(bytes));
             }
             Thread.sleep(2000);
+        }
+    }
+
+    /**
+     * Unzip it
+     *
+     * @param zipFile input zip file
+     * @param output zip file output folder
+     */
+    public static void unZipIt(String zipFile, String outputFolder) {
+
+        byte[] buffer = new byte[1024];
+        try {
+            //create output directory is not exists
+            File folder = new File(outputFolder);
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            //get the zip file content
+            ZipInputStream zis
+                    = new ZipInputStream(new FileInputStream(zipFile));
+            //get the zipped file list entry
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String fileName = ze.getName();
+                File newFile = new File(outputFolder + File.separator + fileName);
+
+                System.out.println("file unzip : " + newFile.getAbsoluteFile());
+
+                //create all non exists folders
+                //else you will hit FileNotFoundException for compressed folder
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+                ze = zis.getNextEntry();
+            }
+
+            zis.closeEntry();
+            zis.close();
+
+            System.out.println("Done");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
