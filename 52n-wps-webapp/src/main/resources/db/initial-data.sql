@@ -485,6 +485,7 @@ INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.Geoserv
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.GeoserverWCSGeneratorCM', FALSE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.MapserverWMSGeneratorCM', FALSE);
 
+INSERT INTO FORMATENTRY VALUES('application/zip', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('image/tiff', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
@@ -514,6 +515,7 @@ INSERT INTO FORMATENTRY VALUES('application/rData+Spatial', '', 'base64', 'org.n
 INSERT INTO FORMATENTRY VALUES('application/rData+SpatialPoints', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/rData+SpatialPolygons', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('application/zip', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('image/tiff', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/geotiff', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
@@ -571,6 +573,7 @@ INSERT INTO FORMATENTRY VALUES('application/x-geotiff', '', 'base64', 'org.n52.w
 INSERT INTO FORMATENTRY VALUES('application/hdf4-eos', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 
+INSERT INTO FORMATENTRY VALUES('application/zip', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('image/tiff', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
@@ -665,6 +668,9 @@ INSERT INTO FORMATENTRY VALUES('application/vnd.geo+json', '', '', 'org.n52.wps.
 
 INSERT INTO FORMATENTRY VALUES('text/plain', 'http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd', '', 'org.n52.wps.io.modules.parser.WCPSQueryParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', 'http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd', '', 'org.n52.wps.io.modules.generator.WCPSGeneratorCM',TRUE);
+
+INSERT INTO FORMATENTRY VALUES('application/atom+xml', '', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('application/atom+xml', '', '', 'org.n52.wps.io.modules.generator.GenericXMLDataGeneratorCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/xml; subtype=gml/2.1.2', 'http://schemas.opengis.net/gml/2.1.2/feature.xsd', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);
@@ -873,8 +879,8 @@ INSERT INTO CONFIGURATIONENTRY VALUES('sshhost','org.n52.wps.webapp.entities.Rem
 INSERT INTO CONFIGURATIONENTRY VALUES('sshuser','org.n52.wps.webapp.entities.RemoteDockerHostBackend','root');
 INSERT INTO CONFIGURATIONENTRY VALUES('sshpassword','org.n52.wps.webapp.entities.RemoteDockerHostBackend','Startup1$');
 INSERT INTO CONFIGURATIONENTRY VALUES('nfsWPSPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','/nfs-wps');
-INSERT INTO CONFIGURATIONENTRY VALUES('nfsEODataPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','/nfs-eodata');
-INSERT INTO CONFIGURATIONENTRY VALUES('EODataConversionPrefix','org.n52.wps.webapp.entities.RemoteDockerHostBackend','file://eodata');
+INSERT INTO CONFIGURATIONENTRY VALUES('nfsEODataPath','org.n52.wps.webapp.entities.RemoteDockerHostBackend','/nas-data');
+INSERT INTO CONFIGURATIONENTRY VALUES('EODataConversionPrefix','org.n52.wps.webapp.entities.RemoteDockerHostBackend','file:///nas-data');
 INSERT INTO CONFIGURATIONENTRY VALUES('inputDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','inputDir');
 INSERT INTO CONFIGURATIONENTRY VALUES('outputDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','outputDir');
 INSERT INTO CONFIGURATIONENTRY VALUES('envDir','org.n52.wps.webapp.entities.RemoteDockerHostBackend','envDir');

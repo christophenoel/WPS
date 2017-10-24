@@ -57,6 +57,7 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
             new StringConfigurationEntry(
                     "dockerCertPath", "Docker Certificate Path", "",
                     true, ""),
+            /**
             new StringConfigurationEntry(
                     "dockerConfig", "Docker Config File Path", "",
                     true, ""),
@@ -71,7 +72,7 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
                     true, ""),
             new StringConfigurationEntry(
                     "registryEmail", "Docker Registry Email", "",
-                    true, ""),
+                    true, ""),*/
             new StringConfigurationEntry(
                     "sshhost", "Host access by SSH with NFS mounted", "",
                     true, ""),
@@ -107,12 +108,15 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     private String nfsEODataPath;
     private String user;
     private String password;
+    
     private String dockerCertPath;
+    /**
     private String dockerConfig;
     private String apiVersion;
     private String registryUserName;
     private String registryPassword;
     private String registryEmail;
+    * */
     private String EODataConversionPrefix;
 
     public String getEODataConversionPrefix() {
@@ -226,81 +230,6 @@ public class RemoteDockerHostBackend implements ConfigurationModule {
     @ConfigurationKey(key = "dockerCertPath")
     public void setDockerCertPath(String dockerCertPath) {
         this.dockerCertPath = dockerCertPath;
-    }
-
-    /**
-     * @return the dockerConfig
-     */
-    public String getDockerConfig() {
-        return dockerConfig;
-    }
-
-    /**
-     * @param dockerConfig the dockerConfig to set
-     */
-    @ConfigurationKey(key = "dockerConfig")
-    public void setDockerConfig(String dockerConfig) {
-        this.dockerConfig = dockerConfig;
-    }
-
-    /**
-     * @return the apiVersion
-     */
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    /**
-     * @param apiVersion the apiVersion to set
-     */
-    @ConfigurationKey(key = "apiVersion")
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
-
-    /**
-     * @return the registryUserName
-     */
-    public String getRegistryUserName() {
-        return registryUserName;
-    }
-
-    /**
-     * @param registryUserName the registryUserName to set
-     */
-    @ConfigurationKey(key = "registryUsername")
-    public void setRegistryUserName(String registryUserName) {
-        this.registryUserName = registryUserName;
-    }
-
-    /**
-     * @return the registryPassword
-     */
-    public String getRegistryPassword() {
-        return registryPassword;
-    }
-
-    /**
-     * @param registryPassword the registryPassword to set
-     */
-    @ConfigurationKey(key = "registryPassword")
-    public void setRegistryPassword(String registryPassword) {
-        this.registryPassword = registryPassword;
-    }
-
-    /**
-     * @return the registryEmail
-     */
-    public String getRegistryEmail() {
-        return registryEmail;
-    }
-
-    /**
-     * @param registryEmail the registryEmail to set
-     */
-    @ConfigurationKey(key = "registryEmail")
-    public void setRegistryEmail(String registryEmail) {
-        this.registryEmail = registryEmail;
     }
 
     public String getSshhost() {

@@ -23,12 +23,12 @@
 		</rollingPolicy>
 
 		<encoder>
-			<pattern>%d{ISO8601} [%t] %-5p %c: %m%n</pattern>
+			<pattern>%d{ISO8601} [%t] %L %-5p %c: %m%n</pattern>
 		</encoder>
 	</appender>
 	<appender name="wpsconsole" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{ISO8601} [%t] %-5p %c: %m%n</pattern>
+			<pattern>%d{ISO8601} [%t] %L %-5p %c: %m%n</pattern>
 		</encoder>
 	</appender>
 

@@ -30,7 +30,6 @@ package org.n52.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Arrays;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataDocument;
@@ -79,7 +78,7 @@ public class ExecuteRequestBuilder {
         ex.setResponse(ExecuteRequestType.Response.DOCUMENT);
         ex.addNewIdentifier().setStringValue(
                 processDesc.getIdentifier().getStringValue());
-        
+
     }
 
     public ExecuteRequestBuilder(ProcessDescriptionType processDesc,
@@ -174,7 +173,7 @@ public class ExecuteRequestBuilder {
     public void addGenericFileComplexData(String parameterID,
             GenericFileDataBinding value, String schema,
             String encoding, String mimeType) throws WPSClientException {
-
+        LOGGER.debug("addGenericFileComplex");
         InputDescriptionType inputDesc = getParameterDescription(parameterID);
         if (inputDesc == null) {
             throw new IllegalArgumentException(
@@ -202,10 +201,11 @@ public class ExecuteRequestBuilder {
         if (encoding == null || encoding.equals("")
                 || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
             stream = value.getPayload().getDataStream();
+            LOGGER.debug("encoding not base64");
 
         } else if (encoding.equalsIgnoreCase("base64")) {
-                
-     
+            LOGGER.debug("encoding is base64");
+
             stream = new Base64InputStream(value.getPayload().getDataStream(),
                     true, -1, null);
         } else {
@@ -747,23 +747,25 @@ public class ExecuteRequestBuilder {
             LOGGER.debug("input stream");
             InputStream stream = (InputStream) value;
             try {
-                data.set(XmlObject.Factory.parse(stream));
-            } catch (XmlException e) {
+                byte[] byteArray = IOUtils.toByteArray(stream);
+                // TODO encode base64 conditionally
+                //byte[] base64Array = Base64.getEncoder().encode(byteArray);
+                //String s = new String(base64Array);
+                String s = new String(byteArray);
+                LOGGER.debug("parsed byte Array " + byteArray);
+                LOGGER.debug("parsed string " + s);
 
-                LOGGER.warn(
-                        "error parsing data stream as xml node, trying to parse data as xs:string");
-                String text = "";
-                StringWriter writer = new StringWriter();
-                
                 try {
-                    IOUtils.copy(stream, writer,"UTF-8");
-                    text = writer.toString();
-                } catch (IOException e1) {
-                    LOGGER.error("error parsing stream", e);
+                    data.set(XmlObject.Factory.parse(s));
+                } catch (XmlException e) {
+
+                    LOGGER.warn(
+                            "error parsing data stream as xml node, trying to parse data as xs:string");
+                    XmlString xml = XmlString.Factory.newInstance();
+                    xml.setStringValue(s);
+                     
+                    data.set(xml);
                 }
-                XmlString xml = XmlString.Factory.newInstance();
-                xml.setStringValue(text);
-                data.set(xml);
             } catch (IOException e) {
                 e.printStackTrace();
                 LOGGER.error("error parsing stream", e);

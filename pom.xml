@@ -251,13 +251,14 @@
         <module>52n-wps-algorithm-geotools</module>
         <module>52n-wps-algorithm-deploy</module>
         <module>52n-wps-database</module>
+        <module>52n-wps-eoc</module>
         <module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps2-client-lib</module>
         <module>52n-wps-sextante</module>
         <module>52n-wps-grass</module>
         <module>52n-wps-r</module>
-        <module>52n-wps-eoc</module>
+        
      
     </modules>
     <properties>
