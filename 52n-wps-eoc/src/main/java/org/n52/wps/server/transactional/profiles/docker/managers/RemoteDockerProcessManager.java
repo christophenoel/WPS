@@ -74,6 +74,7 @@ import net.opengis.wps.x20.ExecuteDocument;
 import net.opengis.wps.x20.ExecuteRequestType;
 import net.opengis.wps.x20.InputDescriptionType;
 import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.LiteralValueDocument;
 import net.opengis.wps.x20.OutputDefinitionType;
 import net.opengis.wps.x20.OutputDescriptionType;
 import net.opengis.wps.x20.ProcessOfferingDocument;
@@ -364,15 +365,17 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                                 "Reference starts with the configured prefix " + db.getEODataConversionPrefix());
                         //Hack for Spacebel
                         log.debug("hack for spacebel?");
-                        if(ref.startsWith("file:///nas-data")) {
+                        if (ref.startsWith("file:///nas-data")) {
                             log.debug("adding SAFE directory");
-                            String productid = StringUtils.substringAfterLast(ref, "/");
-                            ref= ref.concat("/").concat(productid).concat(".SAFE");
+                            String productid = StringUtils.substringAfterLast(
+                                    ref, "/");
+                            ref = ref.concat("/").concat(productid).concat(
+                                    ".SAFE");
                         }
                         String convertedRef = ref.replaceFirst(
                                 db.getEODataConversionPrefix(),
                                 db.getNfsEODataPath());
-                        
+
                         log.debug("Converted reference to " + convertedRef);
                         // indicate the EO store must be mounted to container for execution
                         dirToMount.add(convertedRef);
@@ -428,8 +431,18 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                 }
             } else if (inputDesc.getDataDescription() instanceof LiteralDataType) {
                 LiteralDataType literalData = (LiteralDataType) inputDesc.getDataDescription();
+                String value = null;
+                // Try parsing literalValue
+                try {
+                    LiteralValueDocument literalValue = LiteralValueDocument.Factory.parse(
+                            input.getData().getDomNode().getFirstChild());
+                    value = literalValue.getLiteralValue().getStringValue();
+                    // Else this is plain/text
+                } catch (Exception literalEx) {
+                    value = input.getData().getDomNode().getFirstChild().getNodeValue();
+                }
                 // add to the environmnent variable
-                env.add("WPS_INPUT_" + id.toUpperCase() + "=" + input.getData().getDomNode().getFirstChild().getNodeValue());
+                env.add("WPS_INPUT_" + id.toUpperCase() + "=" + value);
             } else {
                 throw new ExceptionReport(
                         id + " input is neither ComplexData nor LiteralData!",
@@ -516,8 +529,9 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                             instanceId).toString(), i).toString());
             SFTPClient ftpClient = ssh.newSFTPClient();
             ftpClient.mkdirs(targetFileLocation);
-            
-            for (File f : FileUtils.listFiles(new File(tempDir.toString()), TrueFileFilter.INSTANCE,
+
+            for (File f : FileUtils.listFiles(new File(tempDir.toString()),
+                    TrueFileFilter.INSTANCE,
                     TrueFileFilter.INSTANCE)) {
                 log.debug("writing " + f.getAbsolutePath());
                 ftpClient.put(f.getAbsolutePath(),
