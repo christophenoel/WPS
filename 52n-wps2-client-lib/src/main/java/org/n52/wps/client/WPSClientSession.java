@@ -81,7 +81,7 @@ public class WPSClientSession {
     private static final String OGC_OWS_URI = "http://www.opengis.net/ows/2.0";
     private static String SUPPORTED_VERSION = "2.0.0";
 
-    private static WPSClientSession session;
+    private  WPSClientSession session;
     private Map<String, CapabilitiesDocument> loggedServices;
     private XmlOptions options = null;
 
@@ -103,7 +103,7 @@ public class WPSClientSession {
     /*
      * @result An instance of a WPS Client session.
      */
-    public static WPSClientSession getInstance() {
+    public  WPSClientSession getInstance() {
         if (session == null) {
             session = new WPSClientSession();
         }
@@ -115,7 +115,7 @@ public class WPSClientSession {
      * old service entries/descriptions. However, the session has to be
      * repopulated afterwards.
      */
-    public static void reset() {
+    public void reset() {
         session = new WPSClientSession();
     }
 

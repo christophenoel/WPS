@@ -41,6 +41,7 @@ import net.opengis.wps.x20.ExecuteRequestType;
 import net.opengis.wps.x20.FormatDocument;
 import net.opengis.wps.x20.InputDescriptionType;
 import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.LiteralValueDocument;
 import net.opengis.wps.x20.OutputDefinitionType;
 import net.opengis.wps.x20.OutputDescriptionType;
 import net.opengis.wps.x20.ProcessDescriptionType;
@@ -360,11 +361,13 @@ public class ExecuteRequestBuilder {
         input.setId(parameterID);
 
         Data data = input.addNewData();
+        LiteralValueDocument literalValue = LiteralValueDocument.Factory.newInstance();
         XmlString xml = XmlString.Factory.newInstance();
         xml.setStringValue(value);
-        data.set(xml);
+        literalValue.addNewLiteralValue().set(xml);
+        data.set(literalValue);
         input.setData(data);
-
+        
         net.opengis.ows.x20.DomainMetadataType dataType = ((LiteralDataType) inputDesc.getDataDescription()).getLiteralDataDomainArray(
                 0).getDataType();
         if (dataType
