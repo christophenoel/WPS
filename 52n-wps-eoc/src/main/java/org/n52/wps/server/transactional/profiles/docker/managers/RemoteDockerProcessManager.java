@@ -393,10 +393,13 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                         log.debug("extension is " + extension);
                         URL refURL = new URL(ref);
                         byte[] binary = IOUtils.toByteArray(refURL.openStream());
-                        log.debug(
-                                "Found mimeType " + input.getData().getMimeType());
-                        if (extension.equalsIgnoreCase("zip") || input.getData().getMimeType().equalsIgnoreCase(
-                                "application/zip") || input.getData().getMimeType().contains(
+                        String mimeType="";
+                        if(input.getReference().getMimeType()!=null) {
+                            mimeType = input.getReference().getMimeType();
+                        }
+                        log.debug("Found mimeType " + mimeType);
+                        if (extension.equalsIgnoreCase("zip") || mimeType.equalsIgnoreCase(
+                                "application/zip") || mimeType.contains(
                                         "zip")) {
                             log.debug("added to zipfiles");
                             zipfiles.put(id, binary);
@@ -413,8 +416,12 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                     String testString = new String(binary);
                     //log.debug("decoded:" + testString);
                     log.debug("putting file " + id);
-                    if (input.getData().getMimeType().equalsIgnoreCase(
-                            "application/zip") || input.getData().getMimeType().contains(
+                     String mimeType="";
+                        if(input.getData().getMimeType()!=null) {
+                            mimeType = input.getData().getMimeType();
+                        }
+                    if (mimeType.equalsIgnoreCase(
+                            "application/zip") || mimeType.contains(
                                     "zip")) {
                         log.debug("added to zipfiles");
                         zipfiles.put(id, binary);

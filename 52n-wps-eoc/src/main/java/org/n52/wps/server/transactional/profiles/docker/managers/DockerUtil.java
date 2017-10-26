@@ -122,7 +122,7 @@ public class DockerUtil {
      */
     public static MetadataType getMetadataContentByKey(String role,
             ProcessOfferingDocument.ProcessOffering description) {
-        log.debug("Retrieving MetadataContent from description:" + description);
+        //log.debug("Retrieving MetadataContent from description:" + description);
         for (MetadataType m : description.getProcess().getMetadataArray()) {
             if (m.getRole().equalsIgnoreCase(role)) {
                 log.debug("found role");
