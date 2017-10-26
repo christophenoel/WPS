@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:Execute xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:xlink="http://www.w3.org/1999/xlink" service="WPS" version="2.0.0" response="document" mode="sync" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ows:Identifier>DeployProcess</ows:Identifier>
+	<wps:Input id="applicationPackage">
+		<wps:Reference mimeType="text/xml" xlink:href="http://raw.githubusercontent.com/spacebel/WPS/wps2.0-transactional/52n-wps-eoc/src/main/resources/examples/landcover-applicationPackage-owc.xml"/>
+	</wps:Input>
+	<wps:Output id="deployResult" transmission="value"/>
+</wps:Execute>

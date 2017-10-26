@@ -1,0 +1,6 @@
+<wps:Result xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd" xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlin="http://www.w3.org/1999/xlink">
+   <wps:JobID>8e89cba9-0dc2-4203-b13a-15f9d0cec99b</wps:JobID>
+   <wps:Output id="undeployResult">
+      <wps:Reference mimeType="application/atom+xml" xlin:href="http://localhost:8081/wps/RetrieveResultServlet?id=8e89cba9-0dc2-4203-b13a-15f9d0cec99bundeployResult.2c4da835-59cc-4252-8b68-69f08b1976f5"/>
+   </wps:Output>
+</wps:Result>
