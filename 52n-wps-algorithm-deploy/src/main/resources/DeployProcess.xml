@@ -12,6 +12,8 @@
                 <wps:ComplexData>
                     <wps:Format mimeType="text/xml"
                                 default="true"/>
+                    <!-- Case of OWC atom feed -->
+                    <wps:Format mimeType="application/atom+xml" encoding="UTF-8"/>
                 </wps:ComplexData>
             </wps:Input>
             <wps:Output>
