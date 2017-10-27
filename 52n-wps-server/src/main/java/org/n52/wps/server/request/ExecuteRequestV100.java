@@ -40,9 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.ExceptionType;
 import net.opengis.wps.x100.ComplexDataType;
@@ -60,7 +58,6 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ResponseDocumentType;
 import net.opengis.wps.x100.ResponseFormType;
 import net.opengis.wps.x100.StatusType;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
@@ -72,11 +69,9 @@ import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.AbstractTransactionalAlgorithm;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
@@ -659,12 +654,10 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                 subject.addObserver(this);
             }
 
-            if(algorithm instanceof AbstractTransactionalAlgorithm){
-                returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
-            } else {
+            
                 inputMap = parser.getParsedInputData();
                 returnResults = algorithm.run(inputMap);
-            }
+            
 
             List<String> errorList = algorithm.getErrors();
             if (errorList != null && !errorList.isEmpty()) {

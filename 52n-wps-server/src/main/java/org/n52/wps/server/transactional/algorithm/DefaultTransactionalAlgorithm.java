@@ -45,7 +45,6 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.transactional.manager.IProcessManager;
 import org.n52.wps.server.transactional.repository.TransactionalAlgorithmRepository;
 import org.slf4j.Logger;
@@ -96,17 +95,14 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
 
    
 
-    
-    public Map<String, IData> run(ExecuteRequest request) throws Exception {
-        ProcessDescription pdesc = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(((ExecuteRequestV200)request).getAlgorithmIdentifier());
-            ProcessOfferingDocument.ProcessOffering offering  = (ProcessOfferingDocument.ProcessOffering) pdesc.getProcessDescriptionType(WPSConfig.VERSION_200);
-        Map<String, IData> response = manager.invoke(((ExecuteRequestV200)request), algorithmID,offering);
-        return response;
-    }
+   
 
-    @Override
-    public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
-        throw new UnsupportedOperationException("Default Transactional Run with inputData is not supported"); //To change body of generated methods, choose Tools | Templates.
+    
+    public Map<String, IData> run(Map<String, List<IData>> inputData, ExecuteRequest request) throws ExceptionReport {
+        ProcessDescription pdesc = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.getAlgorithmID());
+            ProcessOfferingDocument.ProcessOffering offering  = (ProcessOfferingDocument.ProcessOffering) pdesc.getProcessDescriptionType(WPSConfig.VERSION_200);
+        Map<String, IData> response = manager.invoke(inputData, algorithmID,offering,request);
+        return response;
     }
 
     @Override
@@ -170,6 +166,11 @@ public class DefaultTransactionalAlgorithm implements IAlgorithm {
         }
         return description;
 
+    }
+
+    @Override
+    public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
+        throw new UnsupportedOperationException("Not supported - replaced with unique id-"); //To change body of generated methods, choose Tools | Templates.
     }
 }
 

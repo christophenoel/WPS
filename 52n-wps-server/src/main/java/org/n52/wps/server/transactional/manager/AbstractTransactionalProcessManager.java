@@ -34,9 +34,11 @@
 package org.n52.wps.server.transactional.manager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
 import org.n52.wps.webapp.api.ConfigurationModule;
@@ -68,7 +70,7 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
     @Override
 	public abstract Collection<String> getAllProcesses() throws Exception;
     @Override
-	public abstract Map<String, IData> invoke(ExecuteRequest request, String algorithmID,ProcessOfferingDocument.ProcessOffering description) throws Exception;
+	public abstract Map<String, IData> invoke(Map<String, List<IData>> inputData, String algorithmID,ProcessOfferingDocument.ProcessOffering description, ExecuteRequest request) throws ExceptionReport;
     @Override
 	public abstract boolean deployProcess(DeploymentProfile request) throws Exception;
 

@@ -199,18 +199,19 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
                 ISubject subject = (ISubject) algorithm;
                 subject.addObserver(this);
             }
+            InputHandler parser = new InputHandler.Builder(new Input(inputs),
+                        getAlgorithmIdentifier()).build();
+                inputMap = parser.getParsedInputData();
             if (algorithm instanceof DefaultTransactionalAlgorithm) {
                 LOGGER.debug(
                         "Starting to run " + ((DefaultTransactionalAlgorithm) algorithm).getAlgorithmID());
-                returnResults = ((DefaultTransactionalAlgorithm) algorithm)
-                        .run(this);
-            } else {
-                InputHandler parser = new InputHandler.Builder(new Input(inputs),
-                        getAlgorithmIdentifier()).build();
+                returnResults = ((DefaultTransactionalAlgorithm)algorithm).run(inputMap,this);
                 
-                inputMap = parser.getParsedInputData();
+            } 
+            else {
                 returnResults = algorithm.run(inputMap);
             }
+            
             LOGGER.debug("Checking for errors");
             List<String> errorList = algorithm.getErrors();
             if (errorList != null && !errorList.isEmpty()) {

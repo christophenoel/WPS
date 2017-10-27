@@ -38,6 +38,7 @@ import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
+import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerExit;
@@ -61,7 +62,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -71,11 +71,9 @@ import net.opengis.ows.x20.MetadataType;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataInputType;
 import net.opengis.wps.x20.ExecuteDocument;
-import net.opengis.wps.x20.ExecuteRequestType;
 import net.opengis.wps.x20.InputDescriptionType;
 import net.opengis.wps.x20.LiteralDataType;
 import net.opengis.wps.x20.LiteralValueDocument;
-import net.opengis.wps.x20.OutputDefinitionType;
 import net.opengis.wps.x20.OutputDescriptionType;
 import net.opengis.wps.x20.ProcessOfferingDocument;
 import net.schmizz.sshj.SSHClient;
@@ -94,7 +92,6 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.transactional.manager.AbstractTransactionalProcessManager;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
 import org.n52.wps.server.transactional.util.MimeUtil;
@@ -157,21 +154,47 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private Map<String, IData> invoke(ExecuteDocument execute,
-            String processId,
-            ProcessOfferingDocument.ProcessOffering description, UUID instanceId) throws Exception {
+        
+
+    @Override
+    public Map<String, IData> invoke(Map<String, List<IData>> inputData, String processId, ProcessOfferingDocument.ProcessOffering description, ExecuteRequest request) throws ExceptionReport {
+        ExecuteDocument execDoc = (ExecuteDocument) request.getDocument();
         env = new ArrayList<String>();
         dirToMount = new ArrayList<String>();
         outputs = new HashMap<>();
         log.debug("Starting invoke in RemoteDocker manager");
-        this.instanceId = instanceId.toString();
+        this.instanceId = request.getUniqueId().toString();
         this.description = description;
+        try {
         this.ssh = DockerUtil.getSSHClient(db.getSshhost(), db.getUser(),
                 db.getPassword());
+        }
+        catch(Exception e) {
+            throw new ExceptionReport(
+                                "Error when connecting to SSH remote Docker host",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,e);
+        }
 
         log.debug("Parse docker image");
-        String dockerImageReference = parseDockerImage();
-        docker = getDockerConnection();
+        String dockerImageReference;
+        try {
+            dockerImageReference = parseDockerImage();
+        } catch (XPathExpressionException ex) {
+             throw new ExceptionReport(
+                                "Error when parsing DockerImage metadata",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (XmlException ex) {
+            throw new ExceptionReport(
+                                "Error when parsing DockerImage metadata",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
+        try {
+            docker = getDockerConnection();
+        } catch (DockerCertificateException ex) {
+            throw new ExceptionReport(
+                                "Certificate error when connecting to Docker engine",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
         // get the ssh client connected to the host with NFS access
         log.debug("Getting SSH connection to the host connected to NFS stores");
 
@@ -184,19 +207,47 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
          * (local NFS reference of files)
          */
         log.debug("Handling Inputs");
-        // Handling inputs means prepare the environmnent variable and stores input file on configured NFS store
-        handleInputs(execute, description);
+        try {
+            // Handling inputs means prepare the environmnent variable and stores input file on configured NFS store
+            handleInputs(execDoc, inputData, description);
+        } catch (IOException ex) {
+             throw new ExceptionReport(
+                                "Error when handling inputs",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
         // Handling outputs consists of providing the output file locations in environmnent variables
         log.debug("Handling Outputs");
-        handleOutputs(execute, description); // TODO CHANGE
+        try {
+            handleOutputs(description); // TODO CHANGE
+        } catch (IOException ex) {
+            throw new ExceptionReport(
+                                "Error when handling outputs",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
 
         // Get the image URL
         String imageName = dockerImageReference;
         log.debug("pulling image:" + imageName);
-        docker.pull(imageName);
-        //   ImageInfo infoTest = docker.inspectImage("test");
+        try {
+            docker.pull(imageName);
+            //   ImageInfo infoTest = docker.inspectImage("test");
+        } catch (DockerException ex) {
+           throw new ExceptionReport(
+                                "Error when pulling image",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error interrupted exception",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
 
-        writeEnvPropertyFile(env);
+        try {
+            writeEnvPropertyFile(env);
+        } catch (IOException ex) {
+            throw new ExceptionReport(
+                                "Error writing environmnent variables",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
         log.debug("Env variables passed to the containers");
         ContainerConfig.Builder build = ContainerConfig.builder().image(
                 imageName).env(env);
@@ -232,39 +283,115 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         ContainerConfig container = build.build();
 
         // create container
-        ContainerCreation creation = docker.createContainer(container);
+        ContainerCreation creation;
+        try {
+            creation = docker.createContainer(container);
+        } catch (DockerException ex) {
+            throw new ExceptionReport(
+                                "Error when creating Docker container",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error interrupted exception",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
 
         // get container id
         String id = creation.id();
         // logs declarations
         String stdOutLog;
         String stdErrLog;
-// start container
-        docker.startContainer(id);
+        try {
+            // start container
+            docker.startContainer(id);
+        } catch (DockerException ex) {
+           throw new ExceptionReport(
+                                "Error when starting docker container",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error interupted exception when starting container",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
 
-        ContainerInfo info = docker.inspectContainer(id);
+        ContainerInfo info;
+        try {
+            info = docker.inspectContainer(id);
+        } catch (DockerException ex) {
+           throw new ExceptionReport(
+                                "Error when starting inspectContainer",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error interupted exception when inspectContainer",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
         log.debug("Current status: " + info.state().status());
 
         //DockerUtil.logAndWait(docker, id);
-        final ContainerExit exit = docker.waitContainer(id);
-        LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout());
-        LogStream streamErr = docker.logs(id, DockerClient.LogsParam.stderr());
+        final ContainerExit exit;
+        try {
+            exit = docker.waitContainer(id);
+        } catch (DockerException ex) {
+           throw new ExceptionReport(
+                                "Error when waiting for Docker container",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        } catch (InterruptedException ex) {
+           throw new ExceptionReport(
+                                "Error when waiting for container interrupted exception",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
+        LogStream stream;
+        LogStream streamErr;
+        
+        try {
+            stream = docker.logs(id, DockerClient.LogsParam.stdout());
+            streamErr = docker.logs(id, DockerClient.LogsParam.stderr());
+        } catch (DockerException ex) {
+            throw new ExceptionReport(
+                                "Error when logging docker",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
 
-        log.debug(stream.readFully());
-        log.debug(streamErr.readFully());
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error when logging docker interrupted exception",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
 
-        //ContainerConfig.builder().image(imageName).cmd("sh", "-c", "while
-        /**
-         * ServiceCreateResponse serviceResponse = docker.createService(null);
-         * Service service = docker.inspectService(serviceResponse.id());
-         * service.spec().
-         *
-         */
-        //   CreateContainerResponse container = docker.createContainerCmd("busybox")
-        //      .withCmd("touch", "/test").exec();
-        //        docker.startContainerCmd(container.getId()).exec();
-        // Remove container
-        docker.removeContainer(id);
+        }
+        String logOut = stream.readFully();
+        String logErr = streamErr.readFully();
+        log.debug(logOut);
+        log.debug(logErr);
+        log.debug("DOCKER Exit code is "+exit.statusCode());
+        
+        if(exit.statusCode()!=0) {
+            throw new ExceptionReport(
+                                "Docker Image execution error",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,logErr);
+        }
+        try {
+            //ContainerConfig.builder().image(imageName).cmd("sh", "-c", "while
+            /**
+             * ServiceCreateResponse serviceResponse = docker.createService(null);
+             * Service service = docker.inspectService(serviceResponse.id());
+             * service.spec().
+             *
+             */
+            //   CreateContainerResponse container = docker.createContainerCmd("busybox")
+            //      .withCmd("touch", "/test").exec();
+            //        docker.startContainerCmd(container.getId()).exec();
+            // Remove container
+            docker.removeContainer(id);
+        } catch (DockerException ex) {
+            throw new ExceptionReport(
+                                "Error when removing container",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+
+        } catch (InterruptedException ex) {
+            throw new ExceptionReport(
+                                "Error when removing container interrupted exception ",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+        }
 
         HashMap<String, IData> resultHash = new HashMap<String, IData>();
         for (String k
@@ -281,16 +408,36 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
             }
             String tempPath = Paths.get(System.getProperty("java.io.tmpdir"),
                     k + this.instanceId).toString() + extension;
-            SFTPClient ftpClient = ssh.newSFTPClient();
+            SFTPClient ftpClient;
+            try {
+                ftpClient = ssh.newSFTPClient();
+            } catch (IOException ex) {
+                throw new ExceptionReport(
+                                "Error when creating SSH client for remote Docker host",
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+            }
             LocalDestFile tempLocalFile = new FileSystemFile(tempPath);
-            ftpClient.get(outputPath, tempLocalFile);
+            try {
+                ftpClient.get(outputPath, tempLocalFile);
+            } catch (IOException ex) {
+                throw new ExceptionReport(
+                                "Error when retrieving by SSH output "+outputPath,
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+            }
 
             File temp = new File(tempPath);
             GenericFileParser parser = new GenericFileParser();
-            GenericFileDataBinding parsedOutput = parser.parse(
-                    FileUtils.openInputStream(temp), DockerUtil.getOutputDesc(k,
-                    description).getDataDescription().getFormatArray()[0].getMimeType(),
-                    null);
+            GenericFileDataBinding parsedOutput;
+            try {
+                parsedOutput = parser.parse(
+                        FileUtils.openInputStream(temp), DockerUtil.getOutputDesc(k,
+                                description).getDataDescription().getFormatArray()[0].getMimeType(),
+                        null);
+            } catch (IOException ex) {
+               throw new ExceptionReport(
+                                "Error when reading output temp file "+temp,
+                                ExceptionReport.REMOTE_COMPUTATION_ERROR,ex);
+            }
             log.debug("Putting output " + k);
             resultHash.put(k, parsedOutput);
         }
@@ -303,15 +450,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
 
     }
 
-    @Override
-    public Map<String, IData> invoke(ExecuteRequest request, String algorithmID,
-            ProcessOfferingDocument.ProcessOffering description) throws Exception {
-        ExecuteRequestType doc = ((ExecuteRequestV200) request).getExecute();
-        ExecuteDocument execute = ExecuteDocument.Factory.newInstance();
-        execute.setExecute(doc);
-        return invoke(execute, algorithmID,
-                description, request.getUniqueId());
-    }
+ 
 
     @Override
     public boolean deployProcess(DeploymentProfile request) throws Exception {
@@ -343,7 +482,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
      * @param db
      * @throws ExceptionReport
      */
-    private void handleInputs(ExecuteDocument execute,
+    private void handleInputs(ExecuteDocument execute,Map<String, List<IData>> inputData,
             ProcessOfferingDocument.ProcessOffering description) throws ExceptionReport, IOException {
         HashMap<String, byte[]> files = new HashMap<String, byte[]>();
         HashMap<String, byte[]> zipfiles = new HashMap<String, byte[]>();
@@ -390,6 +529,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                                 pe)) {
                             extension = pe;
                         }
+                        // TODO get Value from inputHandler
                         log.debug("extension is " + extension);
                         URL refURL = new URL(ref);
                         byte[] binary = IOUtils.toByteArray(refURL.openStream());
@@ -472,11 +612,11 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
      * @throws ExceptionReport
      * @throws IOException
      */
-    private void handleOutputs(ExecuteDocument execute,
+    private void handleOutputs(
             ProcessOfferingDocument.ProcessOffering description
     ) throws ExceptionReport, IOException {
-        for (OutputDefinitionType output : execute.getExecute().getOutputArray()) {
-            String id = output.getId();
+        for ( OutputDescriptionType output : description.getProcess().getOutputArray()) {
+            String id = output.getIdentifier().getStringValue();
             log.debug("id:" + id);
             OutputDescriptionType outputDesc = DockerUtil.getOutputDesc(id,
                     description);
@@ -689,5 +829,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         ftpClient.put(temp.getAbsolutePath(),
                 envFile);
     }
+
+
 
 }
