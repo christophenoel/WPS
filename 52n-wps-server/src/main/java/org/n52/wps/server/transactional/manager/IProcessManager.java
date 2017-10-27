@@ -74,7 +74,7 @@ public interface IProcessManager {
 	boolean unDeployProcess(String processID) throws Exception;
 	boolean containsProcess(String processID) throws Exception;
 	Collection<String> getAllProcesses() throws Exception;
-	abstract Map<String, IData> invoke(Map<String, List<IData>> inputData, String algorithmID,ProcessOfferingDocument.ProcessOffering description, ExecuteRequest request) throws ExceptionReport;
+	abstract Map<String, IData> invoke(Map<String, List<IData>> inputData, String algorithmID,ProcessOfferingDocument.ProcessOffering description, ExecuteRequest execDoc) throws ExceptionReport;
 	boolean deployProcess(DeploymentProfile request) throws Exception;
 	
 	

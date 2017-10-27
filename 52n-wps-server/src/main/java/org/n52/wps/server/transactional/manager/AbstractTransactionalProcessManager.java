@@ -70,7 +70,7 @@ public abstract class AbstractTransactionalProcessManager implements IProcessMan
     @Override
 	public abstract Collection<String> getAllProcesses() throws Exception;
     @Override
-	public abstract Map<String, IData> invoke(Map<String, List<IData>> inputData, String algorithmID,ProcessOfferingDocument.ProcessOffering description, ExecuteRequest request) throws ExceptionReport;
+	public abstract Map<String, IData> invoke(Map<String, List<IData>> inputData, String algorithmID,ProcessOfferingDocument.ProcessOffering description, ExecuteRequest executeDoc) throws ExceptionReport;
     @Override
 	public abstract boolean deployProcess(DeploymentProfile request) throws Exception;
 

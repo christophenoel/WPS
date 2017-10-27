@@ -70,7 +70,7 @@ import javax.xml.xpath.XPathFactory;
 import net.opengis.ows.x20.MetadataType;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataInputType;
-import net.opengis.wps.x20.ExecuteDocument;
+import net.opengis.wps.x20.ExecuteRequestType;
 import net.opengis.wps.x20.InputDescriptionType;
 import net.opengis.wps.x20.LiteralDataType;
 import net.opengis.wps.x20.LiteralValueDocument;
@@ -92,6 +92,7 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.transactional.manager.AbstractTransactionalProcessManager;
 import org.n52.wps.server.transactional.profiles.DeploymentProfile;
 import org.n52.wps.server.transactional.util.MimeUtil;
@@ -157,13 +158,13 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         
 
     @Override
-    public Map<String, IData> invoke(Map<String, List<IData>> inputData, String processId, ProcessOfferingDocument.ProcessOffering description, ExecuteRequest request) throws ExceptionReport {
-        ExecuteDocument execDoc = (ExecuteDocument) request.getDocument();
+    public Map<String, IData> invoke(Map<String, List<IData>> inputData, String processId, ProcessOfferingDocument.ProcessOffering description, ExecuteRequest execDoc) throws ExceptionReport {
+        ExecuteRequestType execute = ((ExecuteRequestV200)execDoc).getExecute();
         env = new ArrayList<String>();
         dirToMount = new ArrayList<String>();
         outputs = new HashMap<>();
         log.debug("Starting invoke in RemoteDocker manager");
-        this.instanceId = request.getUniqueId().toString();
+        this.instanceId = ((ExecuteRequestV200)execDoc).getUniqueId().toString();
         this.description = description;
         try {
         this.ssh = DockerUtil.getSSHClient(db.getSshhost(), db.getUser(),
@@ -209,7 +210,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
         log.debug("Handling Inputs");
         try {
             // Handling inputs means prepare the environmnent variable and stores input file on configured NFS store
-            handleInputs(execDoc, inputData, description);
+            handleInputs(execute, inputData, description);
         } catch (IOException ex) {
              throw new ExceptionReport(
                                 "Error when handling inputs",
@@ -482,11 +483,11 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
      * @param db
      * @throws ExceptionReport
      */
-    private void handleInputs(ExecuteDocument execute,Map<String, List<IData>> inputData,
+    private void handleInputs(ExecuteRequestType execute,Map<String, List<IData>> inputData,
             ProcessOfferingDocument.ProcessOffering description) throws ExceptionReport, IOException {
         HashMap<String, byte[]> files = new HashMap<String, byte[]>();
         HashMap<String, byte[]> zipfiles = new HashMap<String, byte[]>();
-        for (DataInputType input : execute.getExecute().getInputArray()) {
+        for (DataInputType input : execute.getInputArray()) {
             String id = input.getId();
             log.debug("handling input:" + id);
             InputDescriptionType inputDesc = DockerUtil.getInputDesc(id,

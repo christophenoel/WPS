@@ -152,7 +152,7 @@ public class InputHandler {
                 algorithmIdentifier).getProcessDescriptionType(
                         WPSConfig.VERSION_200);
 
-        if (processDesc == null) {
+        if (processOffering == null) {
             throw new ExceptionReport(
                     "Error while accessing the process description for " + algorithmIdentifier,
                     ExceptionReport.INVALID_PARAMETER_VALUE);
