@@ -380,7 +380,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                         // indicate the EO store must be mounted to container for execution
                         dirToMount.add(convertedRef);
                         // add location to the environmnent variables list
-                        env.add("WPS_INPUT_" + id.toUpperCase() + "=" + convertedRef);
+                        env.add("WPS_INPUT_" + id + "=" + convertedRef);
                     } else {
                         log.debug("input not local reference");
                         //simple reference file
@@ -449,7 +449,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                     value = input.getData().getDomNode().getFirstChild().getNodeValue();
                 }
                 // add to the environmnent variable
-                env.add("WPS_INPUT_" + id.toUpperCase() + "=" + value);
+                env.add("WPS_INPUT_" + id + "=" + value);
             } else {
                 throw new ExceptionReport(
                         id + " input is neither ComplexData nor LiteralData!",
@@ -496,7 +496,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
                         getOutputDirectory(processID, instanceId).toString(), id).toString()) + extension;
                 SFTPClient ftpClient = ssh.newSFTPClient();
                 ftpClient.mkdirs(pathDir);
-                env.add("WPS_OUTPUT_" + id.toUpperCase() + "=" + path);
+                env.add("WPS_OUTPUT_" + id + "=" + path);
                 outputs.put(id, path);
 
             }
@@ -549,7 +549,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
             //FileUtils.deleteDirectory(new File(tempDir.toString()));
             // add input location to env variables
             log.debug("adding " + i + " =" + targetFileLocation);
-            env.add("WPS_INPUT_" + i.toUpperCase() + "=" + targetFileLocation);
+            env.add("WPS_INPUT_" + i + "=" + targetFileLocation);
         }
         for (String i : files.keySet()) {
             log.debug("handling file store of non-zip" + i);
@@ -574,7 +574,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
             temp.delete();
             // add input location to env variables
             log.debug("adding " + i + " =" + targetFileLocation);
-            env.add("WPS_INPUT_" + i.toUpperCase() + "=" + targetFileLocation);
+            env.add("WPS_INPUT_" + i + "=" + targetFileLocation);
         }
 
         // ssh.disconnect();
