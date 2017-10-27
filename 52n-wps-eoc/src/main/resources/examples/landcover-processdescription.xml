@@ -54,7 +54,22 @@
             </wps:ComplexData>
         </wps:Input>
         <wps:Input>
+            <ows:Title>Training Data Field</ows:Title>
+            <ows:Abstract>The name of the field in the reference data shape fiel that is used in training the classifier.</ows:Abstract>
+            <ows:Identifier>TrainingDataField</ows:Identifier>
+            <wps:LiteralData>
+                <!-- Not sure if WKT has a MIME type -->
+                <wps:Format mimeType="text/plain" default="true"/>
+                <LiteralDataDomain default="true">
+                    <ows:AnyValue/>
+                    <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
+                    <ows:DefaultValue>POLYGON((-92.9 16.2, -92.1 16.2, -92.1 15.4, -92.9 15.4, -92.9 16.2))</ows:DefaultValue>
+                </LiteralDataDomain>
+            </wps:LiteralData>
+        </wps:Input>
+        <wps:Input>
             <ows:Title>Area Of Interest</ows:Title>
+            <ows:Abstract>Area of interest (AOI) as a WKT POLYGON text string.</ows:Abstract>
             <ows:Identifier>AreaOfInterest</ows:Identifier>
             <wps:LiteralData>
                 <!-- Not sure if WKT has a MIME type -->
@@ -81,7 +96,7 @@
         </wps:Input>
         <wps:Input minOccurs="0">
             <ows:Title>Target Resolution</ows:Title>
-            <ows:Abstract>Some description of what the target resolution means.</ows:Abstract>
+            <ows:Abstract>Target resolution (default value 20)</ows:Abstract>
             <ows:Identifier>TargetResolution</ows:Identifier>
             <wps:LiteralData>
                 <wps:Format mimeType="text/plain" default="true"/>
@@ -95,7 +110,7 @@
         <wps:Output>
             <ows:Title>GeoTIF Image</ows:Title>
             <ows:Abstract>Labeled GeoTIF file containing, for each pixel, one of the class codes specified in the training reference data.</ows:Abstract>
-            <ows:Identifier>Image_Result</ows:Identifier>
+            <ows:Identifier>Image</ows:Identifier>
             <wps:ComplexData>
                 <wps:Format mimeType="image/tiff" default="true"/>
             </wps:ComplexData>
