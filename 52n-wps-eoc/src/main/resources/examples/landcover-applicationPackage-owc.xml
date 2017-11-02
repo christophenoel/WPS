@@ -115,7 +115,7 @@
         <content type="html">EOC OpenSearch Collections &lt;br/&gt; Lang Cover Mapping is based on the Sentinel-2 data that can be discovered using several locations.</content>
         <!-- OpenSearch offering for Spacebel -->
         <owc:offering code="http://www.opengis.net/spec/owc-atom/1.0/req/opensearch">
-            <owc:content type="application/opensearchdescription+xml" href="http://h-edc-cat1.spb.spacebel.be/eo-catalogue/series/Sentinel_2/description?sensorType=OPTICAL"/>
+            <owc:content type="application/opensearchdescription+xml" href="http://geo.spacebel.be/opensearch/description.xml?parentIdentifier=EOP%3AIPT%3ASentinel2"/>
         </owc:offering>
     </entry>
 </feed>
