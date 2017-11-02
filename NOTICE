@@ -67,6 +67,8 @@ This project includes:
   Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs under Bouncy Castle Licence
   Bouncy Castle Provider under Bouncy Castle Licence
   builder under Apache License 2.0
+  ClassLoader Leak Prevention library under Apache 2
+  ClassLoader Leak Prevention library for servlet environments under Apache 2
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)

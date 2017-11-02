@@ -757,7 +757,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
     private DockerClient getDockerConnection() throws DockerCertificateException {
         DockerClient docker = DefaultDockerClient.builder().uri(URI.create(
                 db.getDockerURL())).dockerCertificates(new DockerCertificates(
-                Paths.get("D:\\vm1"))).build();
+                Paths.get(db.getDockerCertPath()))).build();
         return docker;
     }
 
