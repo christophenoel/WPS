@@ -1,0 +1,121 @@
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:owc="http://www.opengis.net/owc/1.0" xmlns:os="http://a9.com/-/spec/opensearch/1.1/" xml:lang="en">
+    <link rel="profile" href="http://www.opengis.net/spec/owc-atom/1.0/req/core" title="This file is compliant with version 1.0 of OGC Context"/>
+    <link rel="profile" href="http://www.opengis.net/tb13/eoc" title="This file is compliant with Testbed-13 EOC Thread for Application Packing"/>
+    <id>http://www.opengis.net/tb13/eoc/examples/app_pkg/dcs-stemp-s2</id>
+    <title>EOC Land Cover Application Package</title>
+    <subtitle type="text">Landcover EOC APP PKG</subtitle>
+    <updated>2017-10-19T10:00:00Z</updated>
+    <author>
+        <name>Christophe Noel (Spacebel)</name>
+    </author>
+    <rights>OGC Testbed 13 EOC Thread</rights>
+    <entry>
+        <title>EOC Land Cover Application</title>
+        <id>http://www.opengis.net/tb13/eoc/LandCover</id>
+        <updated>2017-09-04T15:23:09Z</updated>
+        <content type="html">EOC Land Cover Application &lt;br/&gt; Lang Cover Mapping is based on the Sentinel-2 processing workflow generated for the F-TEP platform.</content>
+        <!-- DockerImage offering -->
+        <owc:offering code="http://www.opengis.net/tb13/eoc/docker">
+            <owc:content type="text/plain">registry.hub.docker.com/cnlspacebel/landcover</owc:content>
+        </owc:offering>
+        <owc:offering code="http://www.opengis.net/tb13/eoc/wpsProcessOffering">
+            <owc:content type="application/xml">
+                <wps:ProcessOffering jobControlOptions="async-execute dismiss" outputTransmission="value reference" xmlns:ows="http://www.opengis.net/ows/2.0" xmlns:wps="http://www.opengis.net/wps/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <wps:Process>
+                        <ows:Title>Land Cover Mapping</ows:Title>
+                        <ows:Abstract>Lang Cover Mapping is based on the Sentinel-2 processing workflow generated for the F-TEP platform.</ows:Abstract>
+                        <ows:Identifier>LandCover</ows:Identifier>
+                        <wps:Input>
+                            <ows:Title>Sentinel-2 Image</ows:Title>
+                            <ows:Abstract>URL of Sentinel-2 Level 1C image product in the format offered by AWS or IPT, with a size of up to multiple gigabytes.</ows:Abstract>
+                            <ows:Identifier>Image</ows:Identifier>
+                            <wps:ComplexData>
+                                <wps:Format mimeType="text/directory" default="true"/>
+                            </wps:ComplexData>
+                        </wps:Input>
+                        <wps:Input minOccurs="0">
+                            <ows:Title>Reference Data</ows:Title>
+                            <ows:Abstract>Representative training data set with land cover class attributes, in OGR vector format supported by GDAL, such as ESRI shapefile, in a flat zip structure containing .shp and the supporting files.</ows:Abstract>
+                            <ows:Identifier>ReferenceData</ows:Identifier>
+                            <wps:ComplexData>
+                                <wps:Format mimeType="application/zip" encoding="base64" default="true"/>
+                            </wps:ComplexData>
+                        </wps:Input>
+                        <wps:Input>
+                            <ows:Title>Training Data Field</ows:Title>
+                            <ows:Abstract>The name of the field in the reference data shape fiel that is used in training the classifier.</ows:Abstract>
+                            <ows:Identifier>TrainingDataField</ows:Identifier>
+                            <wps:LiteralData>
+                                <!-- Not sure if WKT has a MIME type -->
+                                <wps:Format mimeType="text/plain" default="true"/>
+                                <LiteralDataDomain default="true">
+                                    <ows:AnyValue/>
+                                    <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
+                                    <ows:DefaultValue>tessellate</ows:DefaultValue>
+                                </LiteralDataDomain>
+                            </wps:LiteralData>
+                        </wps:Input>
+                        <wps:Input>
+                            <ows:Title>Area Of Interest</ows:Title>
+                            <ows:Abstract>Area of interest (AOI) as a WKT POLYGON text string.</ows:Abstract>
+                            <ows:Identifier>AreaOfInterest</ows:Identifier>
+                            <wps:LiteralData>
+                                <!-- Not sure if WKT has a MIME type -->
+                                <wps:Format mimeType="text/plain" default="true"/>
+                                <LiteralDataDomain default="true">
+                                    <ows:AnyValue/>
+                                    <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
+                                    <ows:DefaultValue>POLYGON((-92.9 16.2, -92.1 16.2, -92.1 15.4, -92.9 15.4, -92.9 16.2))</ows:DefaultValue>
+                                </LiteralDataDomain>
+                            </wps:LiteralData>
+                        </wps:Input>
+                        <wps:Input>
+                            <ows:Title>EPSG Code</ows:Title>
+                            <ows:Abstract>Coordinate reference system expressed as a code from the EPSG database using the format "EPSG:NNNN".</ows:Abstract>
+                            <ows:Identifier>EPSGCode</ows:Identifier>
+                            <wps:LiteralData>
+                                <wps:Format mimeType="text/plain" default="true"/>
+                                <LiteralDataDomain>
+                                    <ows:AnyValue/>
+                                    <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#string">String</ows:DataType>
+                                    <ows:DefaultValue>EPSG:32615</ows:DefaultValue>
+                                </LiteralDataDomain>
+                            </wps:LiteralData>
+                        </wps:Input>
+                        <wps:Input minOccurs="0">
+                            <ows:Title>Target Resolution</ows:Title>
+                            <ows:Abstract>Target resolution (default value 20)</ows:Abstract>
+                            <ows:Identifier>TargetResolution</ows:Identifier>
+                            <wps:LiteralData>
+                                <wps:Format mimeType="text/plain" default="true"/>
+                                <LiteralDataDomain>
+                                    <ows:AnyValue/>
+                                    <ows:DataType ows:reference="http://www.w3.org/2001/XMLSchema#long">Long Integer</ows:DataType>
+                                    <ows:DefaultValue>20</ows:DefaultValue>
+                                </LiteralDataDomain>
+                            </wps:LiteralData>
+                        </wps:Input>
+                        <wps:Output>
+                            <ows:Title>GeoTIF Image</ows:Title>
+                            <ows:Abstract>Labeled GeoTIF file containing, for each pixel, one of the class codes specified in the training reference data.</ows:Abstract>
+                            <ows:Identifier>Image</ows:Identifier>
+                            <wps:ComplexData>
+                                <wps:Format mimeType="image/tiff" default="true"/>
+                            </wps:ComplexData>
+                        </wps:Output>
+                    </wps:Process>
+                </wps:ProcessOffering>
+            </owc:content>
+        </owc:offering>
+    </entry>
+    <entry>
+        <title>OpenSearch Collections</title>
+        <id>http://www.opengis.net/tb13/eoc/OS_Collections</id>
+        <updated>2017-09-04T15:23:09Z</updated>
+        <content type="html">EOC OpenSearch Collections &lt;br/&gt; Lang Cover Mapping is based on the Sentinel-2 data that can be discovered using several locations.</content>
+        <!-- OpenSearch offering for Spacebel -->
+        <owc:offering code="http://www.opengis.net/spec/owc-atom/1.0/req/opensearch">
+            <owc:content type="application/opensearchdescription+xml" href="http://h-edc-cat1.spb.spacebel.be/eo-catalogue/series/Sentinel_2/description?sensorType=OPTICAL"/>
+        </owc:offering>
+    </entry>
+</feed>
