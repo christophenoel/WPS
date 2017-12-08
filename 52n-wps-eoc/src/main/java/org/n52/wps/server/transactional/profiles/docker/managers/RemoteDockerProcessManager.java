@@ -1007,7 +1007,7 @@ public class RemoteDockerProcessManager extends AbstractTransactionalProcessMana
 
     private String parseDockerImage() throws XPathExpressionException, XmlException {
         MetadataType appContextMetadata = DockerUtil.getMetadataContentByKey(
-                "http://www.opengis.net//tb13/eoc/applicationContext",
+                "http://www.opengis.net/tb13/eoc/applicationContext",
                 description);
         log.debug("Parsing appContext " + appContextMetadata.toString());
         XPath xPath = XPathFactory.newInstance().newXPath();

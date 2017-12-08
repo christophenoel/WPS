@@ -105,10 +105,11 @@ public class DeployProcess extends AbstractSelfDescribingAlgorithm {
         processOfferingNode.getParentNode().removeChild(processOfferingNode);
         XmlObject packageTarget = XmlObject.Factory.parse(packageDom);
         MetadataType metadata = processOffering.getProcessOffering().getProcess().addNewMetadata();
-        metadata.setRole("http://www.opengis.net//tb13/eoc/applicationContext");
+        
         ApplicationContextDocument appContext = ApplicationContextDocument.Factory.newInstance();
         appContext.addNewApplicationContext().set(packageTarget);
         metadata.set(appContext);
+        metadata.setRole("http://www.opengis.net/tb13/eoc/applicationContext");
         return processOffering;
     }
 
